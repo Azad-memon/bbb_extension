@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "BBB Business Checker",
+  "version": "1.0",
+  "description": "Shows BBB info for websites",
+  "permissions": ["tabs", "storage", "scripting"],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "48": "bbb_logo.png"
+    }
+  },
+  "icons": {
+    "16": "bbb_logo.png",
+    "48": "bbb_logo.png",
+    "128": "bbb_logo.png"
+  }
+}
