@@ -1,4 +1,5 @@
-const BBB_API_URL = "http://localhost:8000/api/bbb/search";
+// const BBB_API_URL = "http://localhost:8000/api/bbb/search";
+const BBB_API_URL = "https://testlink.doodlendash.com/bbb/bbb-extension-api/public/api/bbb/search";
 const BEARER_TOKEN = "@K7p#9vL!x3$Mz2";
 const CACHE_EXPIRY_HOURS = 24;
 
