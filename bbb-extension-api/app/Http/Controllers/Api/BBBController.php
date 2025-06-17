@@ -27,8 +27,17 @@ class BBBController extends Controller
         $parsedHost = parse_url($businessUrl, PHP_URL_HOST);
         $parsedHost = preg_replace('/^www\./', '', $parsedHost);
         if (isset($domainExceptions[$parsedHost])) {
-            // Replace original URL with simplified domain
             $businessUrl = 'https://' . $domainExceptions[$parsedHost];
+        } else {
+            $hostParts = explode('.', $parsedHost);
+            $hostPartsCount = count($hostParts);
+
+            if ($hostPartsCount > 2) {
+                $mainDomain = $hostParts[$hostPartsCount - 2] . '.' . $hostParts[$hostPartsCount - 1];
+                $businessUrl = 'https://' . $mainDomain;
+            } else {
+                $businessUrl = 'https://' . $parsedHost; // Already a root domain
+            }
         }
 
         $endpoint = "https://api.bbb.org/v2/orgs/search?BusinessURL=" . urlencode($businessUrl);
