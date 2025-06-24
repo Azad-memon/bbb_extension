@@ -41,7 +41,6 @@ class BBBController extends Controller
         }
 
         $endpoint = "https://api.bbb.org/v2/orgs/search?BusinessURL=" . urlencode($businessUrl);
-
         $curl = curl_init();
 
         curl_setopt_array($curl, [
@@ -56,7 +55,7 @@ class BBBController extends Controller
         $response = curl_exec($curl);
         $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
         curl_close($curl);
-
+     
         if ($httpCode !== 200 || !$response) {
             return response()->json(['message' => 'Failed to reach BBB API'], 500);
         }
@@ -84,7 +83,7 @@ class BBBController extends Controller
                 'organizationType' => $result['organizationType'] ?? null,
                 'ratingIcon' => $result['ratingIcons'][0]['url'] ?? null,
                 'profileUrl' => $result['profileUrl'] ?? $result['reportURL'] ?? null,
-                'logoUrl' => $isAccredited ? URL::to('/bbb_logo.png') : null,
+                'logoUrl' => $isAccredited ? URL::to('/bbb_logo.svg') : null,
                 'businessId' => $result['businessId'] ?? null,
                 'bbbId' => $result['bbbId'] ?? null,
             ];

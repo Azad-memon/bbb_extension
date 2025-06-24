@@ -3,7 +3,7 @@
   "name": "BBB Business Checker",
   "version": "1.0",
   "description": "Shows BBB info for websites",
-  "permissions": ["tabs", "storage", "scripting"],
+  "permissions": ["tabs", "storage"],
   "host_permissions": ["<all_urls>"],
   "background": {
     "service_worker": "background.js"
