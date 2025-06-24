@@ -71,9 +71,11 @@ document.addEventListener("DOMContentLoaded", () => {
           accreditationDate,
           dateBusinessStarted,
           reviews,
+          logoUrl,
         } = data;
 
         document.getElementById("businessName").innerText = businessName || "-";
+        
         document.getElementById("bbbRating").innerText = bbbRating || "-";
         document.getElementById("location").innerText = location || "-";
         document.getElementById("profileUrl").href = profileUrl || "#";
@@ -88,8 +90,13 @@ document.addEventListener("DOMContentLoaded", () => {
         if (isBBBAccredited && accreditationDate) {
           accreditationRow.style.display = "flex";
           document.getElementById("accreditationDate").innerText = formatDateUS(accreditationDate);
+          const logoElement = document.getElementById("logoUrlAc");
+          const logoContainer = document.querySelector(".accreditLogo");
+          logoElement.src = logoUrl;
+          logoContainer.style.display = "flex";
         } else {
-          accreditationRow.style.display = "none";
+            accreditationRow.style.display = "none";
+           document.querySelector(".accreditLogo").style.display = "none";
         }
 
         document.getElementById("businessId").innerText = businessId || "-";
