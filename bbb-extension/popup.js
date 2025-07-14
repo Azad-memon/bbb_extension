@@ -1,116 +1,86 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const loaderElement = document.getElementById("loader");
-  const errorMessageElement = document.getElementById("errorMessage");
-  const bbbDataElement = document.getElementById("bbbData");
+    const domainFromURL = (urlString) => {
+        try {
+            return new URL(urlString).hostname;
+        } catch {
+            return "";
+        }
+    };
 
-  loaderElement.style.display = "block";
-  errorMessageElement.style.display = "none";
-  bbbDataElement.style.display = "none";
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        const domain = domainFromURL(tabs[0].url);
 
-  function formatDateUS(dateStr) {
+        chrome.storage.local.get([domain], (result) => {
+            const data = result[domain]?.data;
+            if (!data) return;
+
+            // Business Info
+            document.querySelector("h1").innerText = data.businessName || "-";
+            document.querySelector(".website").innerText = domain;
+            document.querySelector(".website").href = data.businessUrl || "#";
+            document.querySelector(".services").innerText = `Products and Services - ${data.primaryCategory || "-"}`;
+            document.querySelector(".business-info-text").innerText = `Accredited since ${formatDateUS(data.accreditationDate)}`;
+            document.querySelectorAll(".bbb-logo").forEach(img => {
+                img.src = data.logoUrl || "bbb_logo.svg";
+            });
+
+            // Rating Section
+            document.querySelector(".grade").innerText = data.bbbRating || "-";
+            document.querySelector(".view-btn").href = data.profileUrl || "#";
+            document.querySelector(".reason-link").href = data.profileUrl || "#";
+
+            // Reviews
+            const avgRating = Number(data.reviews?.averageReviewStarRating || 0).toFixed(1);
+            const totalReviews = data.reviews?.totalCustomReviews || 0;
+
+            const ratingNumEl = document.querySelector(".rating-number");
+            const captionEl = document.querySelector(".caption");
+            const starsEl = document.querySelector(".star-rating");
+
+            ratingNumEl.innerText = `${avgRating}/5`;
+            captionEl.innerText = `Average of ${totalReviews} Customer Reviews`;
+
+            // Clear old stars
+            starsEl.querySelectorAll(".star").forEach(star => star.remove());
+
+            const fullStars = Math.floor(avgRating);
+            const halfStar = avgRating - fullStars >= 0.5 ? 1 : 0;
+            const emptyStars = 5 - fullStars - halfStar;
+
+            for (let i = 0; i < fullStars; i++) {
+                const span = document.createElement("span");
+                span.className = "star full";
+                starsEl.insertBefore(span, ratingNumEl);
+            }
+            if (halfStar) {
+                const span = document.createElement("span");
+                span.className = "star half";
+                starsEl.insertBefore(span, ratingNumEl);
+            }
+            for (let i = 0; i < emptyStars; i++) {
+                const span = document.createElement("span");
+                span.className = "star empty";
+                starsEl.insertBefore(span, ratingNumEl);
+            }
+
+            // Complaints
+            document.querySelector(".complaint-box").innerHTML = `
+                <p class="rating-label">Customer Complaint Summary</p>
+                <p><strong>${data.reviews?.totalClosedComplaintsPastTwelveMonths || 0}</strong> complaints closed in the<br>last 12 months.</p>
+                <p><strong>${data.reviews?.totalClosedComplaintsPastThreeYears || 0}</strong> total complaints in the<br>last 3 years.</p>
+            `;
+        });
+    });
+});
+
+function formatDateUS(dateStr) {
     if (!dateStr) return "-";
     const date = new Date(dateStr);
-    if (isNaN(date)) return dateStr;
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    });
-  }
-
-  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-    if (!tabs || tabs.length === 0) return;
-
-    const currentDomain = new URL(tabs[0].url).hostname;
-    let attempts = 0;
-    const maxAttempts = 50; // 50 x 300ms = 15 seconds
-
-    const pollInterval = setInterval(() => {
-      chrome.storage.local.get([currentDomain], (result) => {
-        const domainData = result[currentDomain];
-        attempts++;
-
-        if (!domainData) return;
-
-        const { loader, data, errorMessage } = domainData;
-
-        if (loader === true) {
-          if (attempts >= maxAttempts) {
-            clearInterval(pollInterval);
-            loaderElement.style.display = "none";
-            errorMessageElement.style.display = "block";
-            errorMessageElement.innerHTML = `
-              <h3>⏳ Server Busy</h3>
-              <p>The server is taking too long to respond.<br>
-              Please try again later.</p>
-            `;
-            bbbDataElement.style.display = "none";
-          }
-          return;
-        }
-
-        // If loader is false (completed)
-        clearInterval(pollInterval);
-
-        if (!data) {
-          loaderElement.style.display = "none";
-          errorMessageElement.style.display = "block";
-          bbbDataElement.style.display = "none";
-          return;
-        }
-
-        const {
-          businessName,
-          bbbRating,
-          isBBBAccredited,
-          location,
-          profileUrl,
-          businessId,
-          primaryCategory,
-          bbbFileOpenDate,
-          accreditationDate,
-          dateBusinessStarted,
-          reviews,
-          logoUrl,
-        } = data;
-
-        document.getElementById("businessName").innerText = businessName || "-";
-        
-        document.getElementById("bbbRating").innerText = bbbRating || "-";
-        document.getElementById("location").innerText = location || "-";
-        document.getElementById("profileUrl").href = profileUrl || "#";
-        document.getElementById("profileUrl").innerText = "View Profile →";
-
-        const accreditedElement = document.getElementById("accredited");
-        accreditedElement.innerHTML = isBBBAccredited
-          ? `<span class="yes">Yes ✅</span>`
-          : `<span class="no">No ❌</span>`;
-
-        const accreditationRow = document.getElementById("accreditationRow");
-        if (isBBBAccredited && accreditationDate) {
-          accreditationRow.style.display = "flex";
-          document.getElementById("accreditationDate").innerText = formatDateUS(accreditationDate);
-          const logoElement = document.getElementById("logoUrlAc");
-          const logoContainer = document.querySelector(".accreditLogo");
-          logoElement.src = logoUrl;
-          logoContainer.style.display = "flex";
-        } else {
-            accreditationRow.style.display = "none";
-           document.querySelector(".accreditLogo").style.display = "none";
-        }
-
-        document.getElementById("businessId").innerText = businessId || "-";
-        document.getElementById("primaryCategory").innerText = primaryCategory || "-";
-        document.getElementById("fileOpenDate").innerText = formatDateUS(bbbFileOpenDate);
-        document.getElementById("startDate").innerText = formatDateUS(dateBusinessStarted);
-        document.getElementById("totalReviews").innerText = reviews?.totalCustomReviews ?? "-";
-        document.getElementById("avgRating").innerText = reviews?.averageReviewStarRating ?? "-";
-        document.getElementById("totalComplaints").innerText = reviews?.totalComplaints ?? "-";
-
-        loaderElement.style.display = "none";
-        errorMessageElement.style.display = "none";
-        bbbDataElement.style.display = "block";
-      });
-    }, 300);
-  });
-});
+    return isNaN(date)
+        ? "-"
+        : date.toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "2-digit",
+              day: "2-digit",
+          });
+}

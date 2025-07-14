@@ -86,6 +86,8 @@ class BBBController extends Controller
                 'logoUrl' => $isAccredited ? URL::to('/bbb_logo.svg') : null,
                 'businessId' => $result['businessId'] ?? null,
                 'bbbId' => $result['bbbId'] ?? null,
+                'businessUrl' => $businessUrl ?? null,
+
             ];
 
             if (!empty($result['statistics'])) {
@@ -93,6 +95,8 @@ class BBBController extends Controller
                     'totalCustomReviews' => $result['statistics']['totalCustomReviews'] ?? 0,
                     'averageReviewStarRating' => $result['statistics']['averageReviewStarRating'] ?? null,
                     'totalComplaints' => $result['statistics']['totalComplaints'] ?? 0,
+                    'totalClosedComplaintsPastTwelveMonths' => $result['statistics']['totalClosedComplaintsPastTwelveMonths'] ?? 0,
+                    'totalClosedComplaintsPastThreeYears' => $result['statistics']['totalClosedComplaintsPastThreeYears'] ?? 0,
                 ];
             }
 
