@@ -198,3 +198,24 @@ body {
   flex-shrink: 1;
   max-width: 170px;
 }
+
+
+/* Optional: Style YES/NO labels */
+/* .accredited-status .yes {
+  color: green;
+  font-weight: bold;
+}
+.accredited-status .no {
+  color: red;
+  font-weight: bold;
+}
+
+/* Optional: Better spacing */
+.data-row {
+  margin-bottom: 8px;
+}
+
+.profile-link {
+  color: #1a73e8;
+  text-decoration: none;
+} */

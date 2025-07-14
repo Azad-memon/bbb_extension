@@ -18,5 +18,12 @@
     "16": "bbb_logo.png",
     "48": "bbb_logo.png",
     "128": "bbb_logo.png"
-  }
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://www.google.com/search*"],
+      "js": ["content.js"],
+      "run_at": "document_end"
+    }
+  ]
 }

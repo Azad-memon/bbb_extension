@@ -19,6 +19,7 @@ async function fetchJson(url, options) {
   return await res.json();
 }
 
+// ✅ Core functionality: run for active tab
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.status === "complete" && tab.url.startsWith("http")) {
     const url = new URL(tab.url);
@@ -84,7 +85,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
             });
           }
         })
-        .catch((err) => {
+        .catch(() => {
           chrome.storage.local.set({
             [domain]: {
               timestamp: now,
@@ -94,6 +95,68 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
             },
           });
         });
+    });
+  }
+});
+
+// ✅ Additional: Support batch fetch for multiple domains (from content.js)
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === "SEARCH_RESULTS_DOMAINS" && Array.isArray(message.domains)) {
+    const now = Date.now();
+
+    message.domains.forEach((domain) => {
+      chrome.storage.local.get([domain], (result) => {
+        const cached = result[domain];
+        const isFresh =
+          cached?.timestamp &&
+          now - cached.timestamp < CACHE_EXPIRY_HOURS * 60 * 60 * 1000 &&
+          cached.data;
+
+        if (isFresh) return;
+
+        chrome.storage.local.set({
+          [domain]: {
+            loader: true,
+            data: null,
+            errorMessage: null,
+            timestamp: now,
+            _source: "batch" // just for reference
+          },
+        });
+
+        fetchJson(BBB_API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${BEARER_TOKEN}`,
+          },
+          body: JSON.stringify({ url: domain }),
+        })
+          .then((data) => {
+            chrome.storage.local.set({
+              [domain]: {
+                timestamp: now,
+                data: data.message === "No business ID found" ? null : data,
+                loader: false,
+                errorMessage: data.message === "No business ID found"
+                  ? "No business ID found"
+                  : null,
+                _source: "batch"
+              },
+            });
+          })
+          .catch(() => {
+            chrome.storage.local.set({
+              [domain]: {
+                timestamp: now,
+                data: null,
+                loader: false,
+                errorMessage: "Something went wrong",
+                _source: "batch"
+              },
+            });
+          });
+      });
     });
   }
 });
