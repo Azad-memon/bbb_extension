@@ -25,5 +25,11 @@
       "js": ["content.js"],
       "run_at": "document_end"
     }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["bbb_logo1.png"],
+      "matches": ["<all_urls>"]
+    }
   ]
 }

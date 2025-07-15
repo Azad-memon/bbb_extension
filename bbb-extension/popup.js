@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
   loaderElement.style.display = "block";
   errorMessageElement.style.display = "none";
   bbbDataElement.style.display = "none";
-  // mainContainer.style.paddingBottom = "100px";
+  mainContainer.style.paddingBottom = "200px";
 
   function formatDateUS(dateStr) {
     if (!dateStr) return "-";

@@ -1,12 +1,10 @@
 (async function () {
   if (!location.hostname.includes("google.com") || !location.pathname.startsWith("/search")) return;
 
-  // Helper to extract base domain
   function getBaseDomain(hostname) {
     const parts = hostname.split('.');
     if (parts.length >= 2) {
       const tld = parts.slice(-2).join('.');
-      // Handle 3rd level TLDs like co.uk, com.au
       const commonTLDs = ['co.uk', 'com.au', 'co.in'];
       if (commonTLDs.includes(tld) && parts.length >= 3) {
         return parts.slice(-3).join('.');
@@ -19,7 +17,7 @@
   const anchors = Array.from(document.querySelectorAll("a"))
     .filter(a => a.href.startsWith("http") && !a.href.includes("google.com"));
 
-  const domainMap = new Map(); // baseDomain => anchors[]
+  const domainMap = new Map();
 
   anchors.forEach(anchor => {
     try {
@@ -33,7 +31,6 @@
   const domains = Array.from(domainMap.keys());
   if (!domains.length) return;
 
-  // Ask background to fetch these domains
   chrome.runtime.sendMessage({
     type: "SEARCH_RESULTS_DOMAINS",
     domains
@@ -60,8 +57,7 @@
 
           (domainMap.get(domain) || []).forEach(anchor => {
             let container = anchor.closest(".MjjYud, .BYM4Nd, .g, .tF2Cxc, .uEierd, .srKDX");
-            console.log(container);
-            // Fallback for odd structures
+
             if (!container) {
               let temp = anchor;
               for (let i = 0; i < 5; i++) {
@@ -79,18 +75,19 @@
               }
             }
 
-            // Skip if already injected or container already contains .bbb-result
-            if (!container || injectedContainers.has(container) || container.querySelector(".bbb-result")) return;
+            // ✅ Skip right panel (Knowledge Panel) injections
+            if (!container || container.closest("#rhs")) return;
+
+            if (injectedContainers.has(container) || container.querySelector(".bbb-result")) return;
 
             injectedContainers.add(container);
             container.appendChild(element.cloneNode(true));
           });
 
-          // Don't block re-checking same domain, just allow multiple containers to be injected
           chrome.storage.local.set({
             [domain]: {
               ...result,
-              _injected: false // intentionally allow re-checking subcontainers
+              _injected: false
             }
           });
         }
@@ -106,31 +103,74 @@
     wrapper.className = "bbb-result";
     wrapper.style.display = "flex";
     wrapper.style.alignItems = "center";
-    wrapper.style.gap = "16px";
-    wrapper.style.padding = "6px 10px";
-    // wrapper.style.border = "1px solid #d2e3fc";
-    wrapper.style.borderRadius = "6px";
     wrapper.style.backgroundColor = "#f7f9fa";
-    wrapper.style.marginTop = "10px";
-    wrapper.style.color = "#000";
+    wrapper.style.borderRadius = "10px";
+    wrapper.style.padding = "8px 12px";
+    wrapper.style.marginTop = "12px";
     wrapper.style.fontSize = "14px";
+    wrapper.style.fontFamily = "Arial, sans-serif";
+    wrapper.style.color = "#000";
+    wrapper.style.boxShadow = "0 1px 4px rgba(0,0,0,0.1)";
     wrapper.style.flexWrap = "wrap";
-    wrapper.style.boxSizing = "border-box";
-    wrapper.style.width = "600px";
+    wrapper.style.minWidth = "600px";
+    wrapper.style.gap = "12px";
 
-    // One-liner elements as spans
-    const business = document.createElement("span");
-    business.innerHTML = `✅ <strong>Business:</strong> ${data.businessName || "-"}`;
+    const logoContainer = document.createElement("div");
+    logoContainer.style.display = "flex";
+    logoContainer.style.alignItems = "center";
+    logoContainer.style.gap = "6px";
 
-    const rating = document.createElement("span");
-    rating.innerHTML = `⭐ <strong>BBB Rating:</strong> ${data.bbbRating || "-"}`;
+    const logo = document.createElement("img");
+    logo.src = chrome.runtime.getURL("bbb_logo1.png");
+    logo.alt = "BBB Logo";
+    logo.style.height = "20px";
 
-    const since = document.createElement("span");
-    since.innerHTML = `📅 <strong>Since:</strong> ${formatDate(data.accreditationDate)}`;
+    const rating = document.createElement("div");
+    rating.textContent = data.bbbRating || "-";
+    rating.style.color = "#0046be";
+    rating.style.fontWeight = "bold";
 
-    wrapper.appendChild(business);
-    wrapper.appendChild(rating);
-    wrapper.appendChild(since);
+    logoContainer.appendChild(logo);
+    logoContainer.appendChild(rating);
+
+    const accredited = document.createElement("div");
+    if (data.isBBBAccredited) {
+      accredited.innerHTML = `<strong style="color:#0046be;">BBB Accredited</strong>`;
+    } else {
+      accredited.innerHTML = `<strong style="color:red;">NOT BBB Accredited</strong>`;
+    }
+
+    const stats = document.createElement("div");
+    stats.style.display = "flex";
+    stats.style.alignItems = "center";
+    stats.style.gap = "6px";
+
+    const reviews = document.createElement("span");
+    reviews.textContent = `${data.reviews?.totalCustomReviews || 0} reviews`;
+
+    const complaints = document.createElement("span");
+    complaints.textContent = `${data.reviews?.totalComplaints || 0} complaints`;
+
+    stats.innerHTML = `|&nbsp;`;
+    stats.appendChild(reviews);
+    stats.innerHTML += `&nbsp;`;
+    stats.appendChild(complaints);
+    stats.innerHTML += `&nbsp;|`;
+
+    const link = document.createElement("a");
+    link.href = data.profileUrl;
+    link.textContent = "See full business profile";
+    link.target = "_blank";
+    link.style.color = "#0046be";
+    link.style.fontWeight = "bold";
+    link.style.marginLeft = "auto";
+    link.style.textDecoration = "none";
+    link.style.whiteSpace = "nowrap";
+
+    wrapper.appendChild(logoContainer);
+    wrapper.appendChild(accredited);
+    wrapper.appendChild(stats);
+    wrapper.appendChild(link);
 
     return wrapper;
   }
