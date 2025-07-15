@@ -612,5 +612,5 @@ div#bbbData {
 }
 
 .innerbusinfo .innerbustext {
-  flex: 1 1 45%;
+  flex: 0 0 45%;
 }
