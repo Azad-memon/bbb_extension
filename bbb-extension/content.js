@@ -108,9 +108,11 @@
     wrapper.style.alignItems = "center";
     wrapper.style.gap = "16px";
     wrapper.style.padding = "6px 10px";
-    wrapper.style.border = "1px solid #d2e3fc";
+    // wrapper.style.border = "1px solid #d2e3fc";
     wrapper.style.borderRadius = "6px";
+    wrapper.style.backgroundColor = "#f7f9fa";
     wrapper.style.marginTop = "10px";
+    wrapper.style.color = "#000";
     wrapper.style.fontSize = "14px";
     wrapper.style.flexWrap = "wrap";
     wrapper.style.boxSizing = "border-box";
