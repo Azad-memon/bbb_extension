@@ -116,14 +116,26 @@ document.addEventListener("DOMContentLoaded", () => {
           errorMessageElement.style.display = "none";
 
           const businessUrl = new URL(tabs[0].url);
-          const domain = businessUrl.hostname.replace("www.", "");
-          const name = domain.split(".")[0].replace(/[-_]/g, " ").replace(/\b\w/g, l => l.toUpperCase());
+          const hostname = businessUrl.hostname.replace("www.", "");
+
+          // Helper to extract base domain
+          function getBaseDomain(hostname) {
+            const parts = hostname.split('.');
+            if (parts.length >= 2) {
+              return parts.slice(-2).join('.');
+            }
+            return hostname;
+          }
+
+          const baseDomain = getBaseDomain(hostname);
+          const name = baseDomain.split(".")[0].replace(/[-_]/g, " ").replace(/\b\w/g, l => l.toUpperCase());
 
           document.getElementById("businessName").innerText = name;
+
           const businessUrlEl = document.getElementById("businessUrl");
           if (businessUrlEl) {
-            businessUrlEl.innerText = domain;
-            businessUrlEl.href = "https://" + domain;
+            businessUrlEl.innerText = baseDomain;
+            businessUrlEl.href = "https://" + baseDomain;
           }
 
           document.getElementById("bbbData").innerHTML = `
@@ -131,10 +143,9 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="innerbusinfo">
               <div class="innerbustext">
                 <h1>${name}</h1>
-                <a class="website" href="https://${domain}" target="_blank">${domain}</a>
+                <a class="website" href="https://${baseDomain}" target="_blank">${baseDomain}</a>
               </div>
-              <div class="innerbusimg " style='flex: 1 1 35%;
-    text-align: center;' id="notfoundbox">
+              <div class="innerbusimg" style='flex: 1 1 35%; text-align: center;' id="notfoundbox">
                 <p class="business-info-text" style=" font-weight: bold;">
                   BUSINESS <br> NOT FOUND
                 </p>
@@ -142,7 +153,6 @@ document.addEventListener("DOMContentLoaded", () => {
                   Find Accredited Businesses
                 </a>
               </div>
-            
             </div>
             <p class="not-registered-text">There is not a BBB profile associated with this website.</p>
             <hr />
@@ -164,6 +174,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
           return;
         }
+
 
 
         const {
