@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
   loaderElement.style.display = "block";
   errorMessageElement.style.display = "none";
   bbbDataElement.style.display = "none";
-  mainContainer.style.paddingBottom = "100px";
+  // mainContainer.style.paddingBottom = "100px";
 
   function formatDateUS(dateStr) {
     if (!dateStr) return "-";
@@ -127,7 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
           }
 
           document.getElementById("bbbData").innerHTML = `
-          <div class="business-info">
+          <div class="business-info business-infothrr">
             <div class="innerbusinfo">
               <div class="innerbustext">
                 <h1>${name}</h1>
@@ -136,7 +136,7 @@ document.addEventListener("DOMContentLoaded", () => {
               <div class="innerbusimg " style='flex: 1 1 35%;
     text-align: center;' id="notfoundbox">
                 <p class="business-info-text" style=" font-weight: bold;">
-                  BUSINESS NOT FOUND
+                  BUSINESS <br> NOT FOUND
                 </p>
                 <a href="https://www.bbb.org/near-me" target="_blank" class="find-link" style="font-size: 12px;">
                   Find Accredited Businesses
@@ -147,8 +147,8 @@ document.addEventListener("DOMContentLoaded", () => {
             <p class="not-registered-text">There is not a BBB profile associated with this website.</p>
             <hr />
             <p class="suggest-text">Would you like to tell us about your experience with this business?</p>
-            <p>Submit a request to add a new BBB Business Profile.</p>
-            <a class="view-btn" href="https://www.bbb.org/RequestABusiness" target="_blank">
+            <p class="submittext">Submit a request to add a new BBB Business Profile.</p>
+            <a class="view-btn notbtn" href="https://www.bbb.org/RequestABusiness" target="_blank">
               <svg width="25px" height="25px" viewBox="0 0 24 24" fill="none"
                 xmlns="http://www.w3.org/2000/svg">
                 <g id="Interface / External_Link">
@@ -221,7 +221,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <p class="small-title1" style="font-weight: bold; ">
               ${businessName} is <br><span style="color: red;">NOT BBB Accredited.</span>
             </p>
-            <hr style="border: none; border-top: 1px solid #ccc; margin: 6px 0;">
+            <hr style="border: none;border-top: 2px solid #006187;margin: 6px 0;">
             <a href="https://www.bbb.org/search?find_country=USA&find_text=${encodeURIComponent(primaryCategory || 'Business')}" 
                target="_blank" 
                class="find-link" 
