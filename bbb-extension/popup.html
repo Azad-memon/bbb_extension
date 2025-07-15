@@ -1,101 +1,106 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="overflow: hidden">
 <head>
   <meta charset="UTF-8" />
-  <title>Better Business Bureau Checker</title>
+  <title>BBB Status</title>
   <link rel="stylesheet" href="popup.css" />
 </head>
 <body>
-  <div class="card">
-    <div class="header">
-      <img src="bbb_logo.png" alt="BBB Logo" class="header-logo" />
-      <h6 class="title">Better Business Bureau Checker</h6>
-    </div>
 
-    <div class="popup-wrapper">
-      <div class="loader" id="loader" style="display: none;">
-        <img src="bbb_logo.png" class="loader-icon" />
-      </div>
-
-      <div id="bbbData" class="data-card" style="display: none; ">
-        <div class="accreditLogo" style="display: none;justify-content: center;">
-           <img  id="logoUrlAc" height="100" width="200" />
-          
-        </div>
-        <div class="data-row">
-          <span class="label">🏢 Business</span>
-          <span id="businessName" class="value">-</span>
-        </div>
-
-        <div class="data-row">
-          <span class="label">✅ Accredited</span>
-          <span id="accredited" class="value accredited-status">-</span>
-        </div>
-
-        <div class="data-row" id="accreditationRow" style="display: none;">
-          <span class="label">🏅 Accredited Since</span>
-          <span id="accreditationDate" class="value">-</span>
-        </div>
-
-        <div class="data-row">
-          <span class="label">⭐ BBB Rating</span>
-          <span id="bbbRating" class="value">-</span>
-        </div>
-
-        <div class="data-row">
-          <span class="label">📍 Business Location</span>
-          <span id="location" class="value">-</span>
-        </div>
-
-        <div class="data-row">
-          <span class="label">🆔 BBB Business ID</span>
-          <span id="businessId" class="value">-</span>
-        </div>
-
-        <div class="data-row">
-          <span class="label">🏷️ Business Type</span>
-          <span id="primaryCategory" class="value">-</span>
-        </div>
-
-        <div class="data-row">
-          <span class="label">📅 BBB Profile Created</span>
-          <span id="fileOpenDate" class="value">-</span>
-        </div>
-
-        <div class="data-row">
-          <span class="label">🏁 Business Started</span>
-          <span id="startDate" class="value">-</span>
-        </div>
-
-        <div class="data-row">
-          <span class="label">🔗 BBB Profile</span>
-          <a id="profileUrl" href="#" target="_blank" class="value profile-link">View Profile →</a>
-        </div>
-
-        <div class="data-row">
-          <span class="label">⭐ Total Reviews</span>
-          <span id="totalReviews" class="value">-</span>
-        </div>
-
-        <div class="data-row">
-          <span class="label">📊 Customer Rating</span>
-          <span id="avgRating" class="value">-</span>
-        </div>
-
-        <div class="data-row">
-          <span class="label">❗ Customer Complaints</span>
-          <span id="totalComplaints" class="value">-</span>
+  <!-- Scrollable Main Container -->
+  <div class="bbb-container-wrapper">
+    <div class="bbb-container">
+      <!-- Header -->
+      <div class="bbb-header">
+        <img src="bbb_logo.png" alt="BBB Logo" class="bbb-logo-static" />
+        <div class="headericons">
+          <span class="setting-btn">⚙️</span>
+          <span class="close-btn">✕</span>
         </div>
       </div>
 
-      <div id="errorMessage" class="error-box" style="display: none;">
-        <h3>🚫 No Business ID Found</h3>
-        <p>
-          We couldn't find a BBB listing for this website.<br />
-          It may not be registered or accredited by the Better Business Bureau.
-        </p>
+      <!-- Loader -->
+      <div class="popup-wrapper">
+        <div class="loader" id="loader">
+          <img src="bbb_logo.png" class="loader-icon" />
+        </div>
+
+        <!-- Main Data -->
+        <div id="bbbData" style="display: none;">
+          <!-- Business Info -->
+          <div class="business-info">
+            <div class="innerbusinfo">
+              <div class="innerbustext">
+                <h1 id="businessName">Business Name</h1>
+                <a class="website" href="#" id="businessUrl">website.com</a>
+              </div>
+              <div class="innerbusimg">
+                <img src="" alt="Accredited Logo" class="logo-dynamic" id="logoUrl" width="100" height="40" />
+                <p class="business-info-text">
+                  Accredited since <span id="accreditationDate">--</span>
+                </p>
+              </div>
+            </div>
+            <p class="services" id="primaryCategory">Products and Services - Category</p>
+            <a class="view-btn" href="#" id="profileUrl">🔗 VIEW ON BBB.org</a>
+          </div>
+
+          <!-- Rating Grid -->
+          <div class="summary-grid">
+            <div class="box left">
+              <p class="small-title" id="accreditationText">This business is BBB Accredited.</p>
+              <img src="" alt="Rating Icon" class="logo-dynamic" id="ratingIcon" width="100" height="40" />
+            </div>
+            <div class="box right">
+              <p class="grade" id="bbbRating">A+</p>
+              <p class="rating-label">BBB Rating</p>
+              <a href="#" class="reason-link" id="ratingReasonLink">Reason for rating ℹ️</a>
+            </div>
+          </div>
+
+          <!-- Review & Complaint Summary -->
+          <div class="rating-summary">
+            <div class="rating-box">
+              <p class="rating-label">Customer Review Rating</p>
+              <div class="star-rating" id="starRatingContainer">
+                <!-- Stars inserted here -->
+                <span class="rating-number" id="avgRating">1.0/5</span>
+              </div>
+              <p class="caption" id="totalReviews">Average of 0 Customer Reviews</p>
+            </div>
+            <div class="complaint-box">
+              <p class="rating-label">Customer Complaint Summary</p>
+              <p>
+                <strong id="complaints12mo">0</strong> complaints closed in the<br />
+                last 12 months.
+              </p>
+              <p>
+                <strong id="complaints3yr">0</strong> total complaints in the<br />
+                last 3 years.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Error Message -->
+        <div id="errorMessage" class="error-box" style="display: none;">
+          <h3>🚫 No Business ID Found</h3>
+          <p>
+            We couldn't find a BBB listing for this website.<br />
+            It may not be registered or accredited by the Better Business Bureau.
+          </p>
+        </div>
       </div>
     </div>
+  </div>
+
+  <!-- Fixed Footer -->
+  <div class="footer-fixed">
+    <span>Show BBB status while browsing</span>
+    <label class="switch">
+      <input type="checkbox" />
+      <span class="slider"></span>
+    </label>
   </div>
 
   <script src="popup.js"></script>

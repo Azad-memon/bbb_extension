@@ -2,6 +2,25 @@ document.addEventListener("DOMContentLoaded", () => {
   const loaderElement = document.getElementById("loader");
   const errorMessageElement = document.getElementById("errorMessage");
   const bbbDataElement = document.getElementById("bbbData");
+  const bbbContainerWrapper = document.querySelector(".bbb-container-wrapper");
+  const toggleCheckbox = document.querySelector(".footer-fixed input[type='checkbox']");
+
+  // Toggle show/hide content on switch and persist in localStorage
+  if (toggleCheckbox && bbbContainerWrapper) {
+    toggleCheckbox.addEventListener("change", () => {
+      const isActive = toggleCheckbox.checked;
+      localStorage.setItem("bbbStatusToggle", isActive);
+      bbbContainerWrapper.style.display = isActive ? "none" : "block";
+    });
+
+    // Load persisted toggle state
+    const storedStatus = localStorage.getItem("bbbStatusToggle") === "true";
+    toggleCheckbox.checked = storedStatus;
+    bbbContainerWrapper.style.display = storedStatus ? "none" : "block";
+
+    // If toggle is active, skip API load
+    if (storedStatus) return;
+  }
 
   loaderElement.style.display = "block";
   errorMessageElement.style.display = "none";
@@ -10,12 +29,38 @@ document.addEventListener("DOMContentLoaded", () => {
   function formatDateUS(dateStr) {
     if (!dateStr) return "-";
     const date = new Date(dateStr);
-    if (isNaN(date)) return dateStr;
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    });
+    return isNaN(date)
+      ? dateStr
+      : date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      });
+  }
+
+  function renderStars(container, average) {
+    if (!container) return;
+    container.innerHTML = ""; // clear previous stars
+    const avg = parseFloat(average) || 0;
+    const full = Math.floor(avg);
+    const half = avg % 1 >= 0.5 ? 1 : 0;
+    const empty = 5 - full - half;
+
+    for (let i = 0; i < full; i++) {
+      const star = document.createElement("span");
+      star.className = "star full";
+      container.appendChild(star);
+    }
+    if (half) {
+      const star = document.createElement("span");
+      star.className = "star half";
+      container.appendChild(star);
+    }
+    for (let i = 0; i < empty; i++) {
+      const star = document.createElement("span");
+      star.className = "star empty";
+      container.appendChild(star);
+    }
   }
 
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -23,7 +68,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const currentDomain = new URL(tabs[0].url).hostname;
     let attempts = 0;
-    const maxAttempts = 50; // 50 x 300ms = 15 seconds
+    const maxAttempts = 50;
 
     const pollInterval = setInterval(() => {
       chrome.storage.local.get([currentDomain], (result) => {
@@ -32,7 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (!domainData) return;
 
-        const { loader, data, errorMessage } = domainData;
+        const { loader, data } = domainData;
 
         if (loader === true) {
           if (attempts >= maxAttempts) {
@@ -49,7 +94,6 @@ document.addEventListener("DOMContentLoaded", () => {
           return;
         }
 
-        // If loader is false (completed)
         clearInterval(pollInterval);
 
         if (!data) {
@@ -61,51 +105,80 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const {
           businessName,
+          businessUrl,
           bbbRating,
           isBBBAccredited,
-          location,
           profileUrl,
-          businessId,
-          primaryCategory,
-          bbbFileOpenDate,
           accreditationDate,
-          dateBusinessStarted,
+          primaryCategory,
+          ratingIcon,
           reviews,
           logoUrl,
         } = data;
 
-        document.getElementById("businessName").innerText = businessName || "-";
-        
-        document.getElementById("bbbRating").innerText = bbbRating || "-";
-        document.getElementById("location").innerText = location || "-";
-        document.getElementById("profileUrl").href = profileUrl || "#";
-        document.getElementById("profileUrl").innerText = "View Profile →";
+        const businessNameEl = document.getElementById("businessName");
+        if (businessNameEl) businessNameEl.innerText = businessName || "-";
 
-        const accreditedElement = document.getElementById("accredited");
-        accreditedElement.innerHTML = isBBBAccredited
-          ? `<span class="yes">Yes ✅</span>`
-          : `<span class="no">No ❌</span>`;
-
-        const accreditationRow = document.getElementById("accreditationRow");
-        if (isBBBAccredited && accreditationDate) {
-          accreditationRow.style.display = "flex";
-          document.getElementById("accreditationDate").innerText = formatDateUS(accreditationDate);
-          const logoElement = document.getElementById("logoUrlAc");
-          const logoContainer = document.querySelector(".accreditLogo");
-          logoElement.src = logoUrl;
-          logoContainer.style.display = "flex";
-        } else {
-            accreditationRow.style.display = "none";
-           document.querySelector(".accreditLogo").style.display = "none";
+        const businessUrlEl = document.getElementById("businessUrl");
+        if (businessUrlEl) {
+          businessUrlEl.innerText = businessUrl || "-";
+          businessUrlEl.href = businessUrl || "#";
         }
 
-        document.getElementById("businessId").innerText = businessId || "-";
-        document.getElementById("primaryCategory").innerText = primaryCategory || "-";
-        document.getElementById("fileOpenDate").innerText = formatDateUS(bbbFileOpenDate);
-        document.getElementById("startDate").innerText = formatDateUS(dateBusinessStarted);
-        document.getElementById("totalReviews").innerText = reviews?.totalCustomReviews ?? "-";
-        document.getElementById("avgRating").innerText = reviews?.averageReviewStarRating ?? "-";
-        document.getElementById("totalComplaints").innerText = reviews?.totalComplaints ?? "-";
+        const logoEl = document.getElementById("logoUrl");
+        if (logoEl) logoEl.src = logoUrl || "bbb_logo.svg";
+
+        const accDateEl = document.getElementById("accreditationDate");
+        if (accDateEl) accDateEl.innerText = formatDateUS(accreditationDate);
+
+        const catEl = document.getElementById("primaryCategory");
+        if (catEl) catEl.innerText = `Products and Services - ${primaryCategory || "-"}`;
+
+        const profileLink = document.getElementById("profileUrl");
+        if (profileLink) profileLink.href = profileUrl || "#";
+
+        const reasonLink = document.getElementById("ratingReasonLink");
+        if (reasonLink) reasonLink.href = profileUrl || "#";
+
+        const ratingEl = document.getElementById("bbbRating");
+        if (ratingEl) ratingEl.innerText = bbbRating || "-";
+
+        const ratingIconEl = document.getElementById("ratingIcon");
+        const accTextEl = document.getElementById("accreditationText");
+
+        if (isBBBAccredited) {
+          if (ratingIconEl) {
+            ratingIconEl.style.display = "block";
+            ratingIconEl.src = logoUrl || ""; // use logoUrl from API only
+          }
+          if (accTextEl) accTextEl.innerText = "This business is BBB Accredited.";
+        } else {
+          if (ratingIconEl) ratingIconEl.style.display = "none";
+          if (accTextEl) accTextEl.innerText = "This business is not BBB Accredited.";
+        }
+
+        const avgRating = Number(reviews?.averageReviewStarRating || 0).toFixed(1);
+        const totalReviews = reviews?.totalCustomReviews || 0;
+
+        const starContainer = document.getElementById("starRatingContainer");
+        renderStars(starContainer, avgRating);
+
+        const avgRatingEl = document.getElementById("avgRating");
+        if (avgRatingEl) avgRatingEl.innerText = `${avgRating}/5`;
+
+        const totalReviewsEl = document.getElementById("totalReviews");
+        if (totalReviewsEl)
+          totalReviewsEl.innerText = `Average of ${totalReviews} Customer Reviews`;
+
+        const complaints12moEl = document.getElementById("complaints12mo");
+        if (complaints12moEl)
+          complaints12moEl.innerText =
+            reviews?.totalClosedComplaintsPastTwelveMonths || 0;
+
+        const complaints3yrEl = document.getElementById("complaints3yr");
+        if (complaints3yrEl)
+          complaints3yrEl.innerText =
+            reviews?.totalClosedComplaintsPastThreeYears || 0;
 
         loaderElement.style.display = "none";
         errorMessageElement.style.display = "none";

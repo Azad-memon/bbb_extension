@@ -83,7 +83,7 @@ class BBBController extends Controller
                 'organizationType' => $result['organizationType'] ?? null,
                 'ratingIcon' => $result['ratingIcons'][0]['url'] ?? null,
                 'profileUrl' => $result['profileUrl'] ?? $result['reportURL'] ?? null,
-                'logoUrl' => $isAccredited ? URL::to('/bbb_logo.svg') : null,
+                'logoUrl' => $isAccredited ? URL::to('/bbb_logo.png') : null,
                 'businessId' => $result['businessId'] ?? null,
                 'bbbId' => $result['bbbId'] ?? null,
                 'businessUrl' => $businessUrl ?? null,
