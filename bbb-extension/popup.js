@@ -218,8 +218,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
           // Modify lower summary box
           summaryAccreditedBox.innerHTML = `
-            <p class="small-title" style="font-weight: bold; ">
-              ${businessName} is <span style="color: red;">NOT BBB Accredited.</span>
+            <p class="small-title1" style="font-weight: bold; ">
+              ${businessName} is <br><span style="color: red;">NOT BBB Accredited.</span>
             </p>
             <hr style="border: none; border-top: 1px solid #ccc; margin: 6px 0;">
             <a href="https://www.bbb.org/search?find_country=USA&find_text=${encodeURIComponent(primaryCategory || 'Business')}" 

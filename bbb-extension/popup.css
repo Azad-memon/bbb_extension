@@ -329,6 +329,12 @@ body {
   line-height: 1.4;
 }
 
+.small-title1 {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 0px;
+  line-height: 1.4;
+}
 .grade {
   font-size: 36px;
   font-weight: bold;

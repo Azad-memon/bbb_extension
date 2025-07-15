@@ -59,9 +59,8 @@
           const injectedContainers = new Set();
 
           (domainMap.get(domain) || []).forEach(anchor => {
-            // Main container detection
             let container = anchor.closest(".MjjYud, .BYM4Nd, .g, .tF2Cxc, .uEierd, .srKDX");
-
+            console.log(container);
             // Fallback for odd structures
             if (!container) {
               let temp = anchor;
