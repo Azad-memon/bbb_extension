@@ -1,39 +1,56 @@
+function createAndInjectFloatingBadge(data) {
+  if (document.getElementById("bbb-rating-badge")) return;
+
+  const badge = document.createElement("div");
+  badge.id = "bbb-rating-badge";
+  badge.style.cssText = `
+        position: fixed;
+        top: 100px;
+        right: 0px;
+        background: #ffffff;
+        color: #000;
+        padding: 10px 14px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: bold;
+        z-index: 999999;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        cursor: default;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      `;
+
+  const img = document.createElement("img");
+  img.src = chrome.runtime.getURL("bbb_logo1.png");
+  img.alt = "BBB";
+  img.style.height = "20px";
+
+  const text = document.createElement("span");
+  text.textContent = ` ${data.bbbRating || "N/A"} ::`;
+
+  badge.appendChild(img);
+  badge.appendChild(text);
+  document.body.appendChild(badge);
+}
+
 (async function () {
   const currentDomain = location.hostname.replace(/^www\./, "");
 
-  // Always check toggle + inject badge on any page
   chrome.storage.local.get(["showBBB"], (res) => {
     const isEnabled = res.showBBB === true;
 
     if (isEnabled) {
       chrome.runtime.sendMessage({ action: "GET_DOMAIN_DATA_FORCE", domain: currentDomain }, (response) => {
         const data = response?.data;
-
-        if (data && !document.getElementById("bbb-rating-badge")) {
-          const badge = document.createElement("div");
-          badge.id = "bbb-rating-badge";
-          badge.style.cssText = `
-            position: fixed;
-            top: 100px;
-            right: 20px;
-            background: #006187;
-            color: #fff;
-            padding: 10px 14px;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
-            z-index: 999999;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-            cursor: default;
-          `;
-          badge.innerText = `Rating: ${data.bbbRating || "N/A"}`;
-          document.body.appendChild(badge);
+        if (data) {
+          createAndInjectFloatingBadge(data); // ✅ reused here
         }
       });
     }
   });
 
-  // Now handle Google search results separately
+  // Only continue for Google Search
   if (!location.hostname.includes("google.com") || !location.pathname.startsWith("/search")) return;
 
   chrome.storage.local.get("showBBB", (res) => {
@@ -119,7 +136,7 @@
             });
 
             if (attempts === 1 && data && !document.querySelector(".bbb-floating-badge")) {
-              injectFloatingBadge(data);
+              createAndInjectFloatingBadge(data); // ✅ reused here too
             }
 
             chrome.storage.local.set({
@@ -139,103 +156,82 @@
     function createBBBElement(data) {
       const wrapper = document.createElement("div");
       wrapper.className = "bbb-result";
-      wrapper.style.display = "flex";
-      wrapper.style.alignItems = "center";
-      wrapper.style.backgroundColor = "#F7F9FA";
-      wrapper.style.borderRadius = "10px";
-      wrapper.style.padding = "8px 12px";
-      wrapper.style.marginTop = "12px";
-      wrapper.style.fontSize = "14px";
-      wrapper.style.fontFamily = "Arial, sans-serif";
-      wrapper.style.color = "#000";
-      wrapper.style.boxShadow = "0 1px 4px rgba(0,0,0,0.1)";
-      wrapper.style.flexWrap = "wrap";
-      wrapper.style.minWidth = "600px";
-      wrapper.style.gap = "12px";
+      wrapper.style.cssText = `
+        display: flex;
+        align-items: center;
+        background-color: #f7f9fa;
+        border-radius: 10px;
+        padding: 8px 12px;
+        margin-top: 12px;
+        font-size: 14px;
+        font-family: Arial, sans-serif;
+        color: #000;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+        flex-wrap: wrap;
+        min-width: 600px;
+        gap: 12px;
+      `;
+
       const logoContainer = document.createElement("div");
       logoContainer.style.display = "flex";
       logoContainer.style.alignItems = "center";
       logoContainer.style.gap = "6px";
+
       const logo = document.createElement("img");
       logo.src = chrome.runtime.getURL("bbb_logo1.png");
       logo.alt = "BBB Logo";
       logo.style.height = "20px";
+
       const rating = document.createElement("div");
       rating.textContent = data.bbbRating || "-";
       rating.style.color = "#0046BE";
       rating.style.fontWeight = "bold";
+
       logoContainer.appendChild(logo);
       logoContainer.appendChild(rating);
+
       const accredited = document.createElement("div");
-      if (data.isBBBAccredited) {
-        accredited.innerHTML = `<strong style="color:#0046be;">BBB Accredited</strong>`;
-      } else {
-        accredited.innerHTML = `<strong style="color:red;">NOT BBB Accredited</strong>`;
-      }
+      accredited.innerHTML = data.isBBBAccredited
+        ? `<strong style="color:#0046be;">BBB Accredited</strong>`
+        : `<strong style="color:red;">NOT BBB Accredited</strong>`;
+
       const stats = document.createElement("div");
       stats.style.display = "flex";
       stats.style.alignItems = "center";
       stats.style.gap = "6px";
+
       const reviews = document.createElement("span");
       reviews.textContent = `${data.reviews?.totalCustomReviews || 0} reviews`;
+
       const complaints = document.createElement("span");
       complaints.textContent = `${data.reviews?.totalComplaints || 0} complaints`;
-      stats.innerHTML = `|&nbsp;`;
+
+      stats.innerHTML = `| `;
       stats.appendChild(reviews);
-      stats.innerHTML += `&nbsp;`;
+      stats.innerHTML += ` `;
       stats.appendChild(complaints);
-      stats.innerHTML += `&nbsp;|`;
+      stats.innerHTML += ` |`;
+
       const link = document.createElement("a");
       link.href = data.profileUrl;
       link.textContent = "See full business profile";
       link.target = "_blank";
-      link.style.color = "#0046BE";
-      link.style.fontWeight = "bold";
-      link.style.marginLeft = "auto";
-      link.style.textDecoration = "none";
-      link.style.whiteSpace = "nowrap";
+      link.style.cssText = `
+        color: #0046be;
+        font-weight: bold;
+        margin-left: auto;
+        text-decoration: none;
+        white-space: nowrap;
+      `;
+
       wrapper.appendChild(logoContainer);
       wrapper.appendChild(accredited);
       wrapper.appendChild(stats);
       wrapper.appendChild(link);
+
       return wrapper;
-    }`  1`
-
-    function injectFloatingBadge(data) {
-      const badge = document.createElement("div");
-      badge.className = "bbb-floating-badge";
-      badge.style.cssText = `
-        position: fixed;
-        top: 100px;
-        right: 10px;
-        z-index: 99999;
-        background-color: #fff;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-        padding: 6px 10px;
-        font-size: 14px;
-        font-weight: bold;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        pointer-events: none;
-      `;
-
-      const icon = document.createElement("img");
-      icon.src = chrome.runtime.getURL("bbb_logo1.png");
-      icon.alt = "BBB";
-      icon.style.height = "20px";
-
-      const rating = document.createElement("span");
-      const ratingText = data.bbbRating || "-";
-      const avgRating = data.reviews?.averageReviewStarRating;
-      rating.textContent = `${ratingText}${avgRating ? ` (${avgRating.toFixed(1)}⭐)` : ""}`;
-      rating.style.color = "#0046be";
-
-      badge.appendChild(icon);
-      badge.appendChild(rating);
-      document.body.appendChild(badge);
     }
+
+
   });
 })();
