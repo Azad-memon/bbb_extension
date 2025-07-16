@@ -614,3 +614,36 @@ div#bbbData {
 .innerbusinfo .innerbustext {
   flex: 0 0 45%;
 }
+
+.bbb-floating-badge {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+
+.bbb-floating-badge img {
+  vertical-align: middle;
+}
+
+.star.full::before {
+  content: "★";
+  color: gold;
+}
+.star.half::before {
+  content: "★";
+  color: #ccc;
+  background: linear-gradient(to right, gold 50%, #ccc 50%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.star.empty::before {
+  content: "☆";
+  color: #ccc;
+}
+body.embedded #footer {
+  display: none;
+}
+body.popup #footer {
+  display: block;
+}

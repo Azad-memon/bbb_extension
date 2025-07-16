@@ -3,8 +3,14 @@
   "name": "BBB Business Checker",
   "version": "1.0",
   "description": "Shows BBB info for websites",
-  "permissions": ["tabs", "storage"],
-  "host_permissions": ["<all_urls>"],
+  "permissions": [
+    "tabs",
+    "storage",
+    "scripting"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
   "background": {
     "service_worker": "background.js"
   },
@@ -21,15 +27,27 @@
   },
   "content_scripts": [
     {
-      "matches": ["*://www.google.com/search*"],
-      "js": ["content.js"],
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content.js"
+      ],
       "run_at": "document_end"
     }
   ],
   "web_accessible_resources": [
     {
-      "resources": ["bbb_logo1.png"],
-      "matches": ["<all_urls>"]
+      "resources": [
+        "bbb_logo.png",
+        "bbb_logo1.png"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
     }
-  ]
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self';"
+  }
 }

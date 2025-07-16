@@ -160,3 +160,76 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     });
   }
 });
+
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === "openPopup") {
+    chrome.windows.create({
+      url: chrome.runtime.getURL("popup.html"),
+      type: "popup",
+      width: 400,
+      height: 620
+    });
+  }
+});
+
+
+// chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+//   if (message.action === "GET_DOMAIN_DATA") {
+//     const domain = message.domain;
+//     chrome.storage.local.get([domain], (result) => {
+//       sendResponse(result[domain]);
+//     });
+//     return true; // needed for async sendResponse
+//   }
+// });
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === "GET_DOMAIN_DATA_FORCE") {
+    const domain = message.domain;
+    const now = Date.now();
+
+    chrome.storage.local.get([domain], async (result) => {
+      const cached = result[domain];
+      const isFresh =
+        cached?.timestamp &&
+        now - cached.timestamp < CACHE_EXPIRY_HOURS * 60 * 60 * 1000 &&
+        cached.data;
+
+      // ✅ If fresh data available, return
+      if (isFresh) {
+        sendResponse({ data: cached.data });
+        return;
+      }
+
+      // 🚀 Otherwise, fetch from API
+      try {
+        const data = await fetchJson(BBB_API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${BEARER_TOKEN}`,
+          },
+          body: JSON.stringify({ url: domain }),
+        });
+
+        const finalData = data.message === "No business ID found" ? null : data;
+
+        chrome.storage.local.set({
+          [domain]: {
+            timestamp: now,
+            data: finalData,
+            loader: false,
+            errorMessage: finalData ? null : "No business ID found"
+          }
+        });
+
+        sendResponse({ data: finalData });
+      } catch (err) {
+        sendResponse({ data: null });
+      }
+    });
+
+    return true; // async sendResponse
+  }
+});
