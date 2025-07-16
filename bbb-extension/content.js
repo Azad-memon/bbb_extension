@@ -4,22 +4,57 @@ function createAndInjectFloatingBadge(data) {
   const badge = document.createElement("div");
   badge.id = "bbb-rating-badge";
   badge.style.cssText = `
-        position: fixed;
-        top: 100px;
-        right: 0px;
-        background: #ffffff;
-        color: #000;
-        padding: 10px 14px;
-        border-radius: 8px;
-        font-size: 16px;
-        font-weight: bold;
-        z-index: 999999;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-        cursor: default;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      `;
+    position: fixed;
+    top: 100px;
+    right: -20px;
+    display: flex !important;
+    background: rgb(255, 255, 255);
+    color: rgb(0, 0, 0);
+    padding: 5px 10px 5px 5px;
+    border-radius: 5px 0px 0px 5px !important;
+    font-size: 16px;
+    align-items: center !important;
+    font-weight: bold;
+    z-index: 999999;
+    box-shadow: rgba(0, 0, 0, 0.3) 0px 2px 6px;
+    cursor: move;
+    gap: 5px;
+    transition: right 0.5s;
+  `;
+
+  // Slide in on hover
+  badge.addEventListener("mouseenter", () => {
+    badge.style.right = "0";
+  });
+
+  badge.addEventListener("mouseleave", () => {
+    badge.style.right = "-20px";
+  });
+
+  // Vertical drag only
+  let isDragging = false;
+  let offsetY = 0;
+
+  badge.addEventListener("mousedown", function (e) {
+    isDragging = true;
+    offsetY = e.clientY - badge.getBoundingClientRect().top;
+    badge.style.transition = "none"; // disable animation during drag
+  });
+
+  document.addEventListener("mousemove", function (e) {
+    if (!isDragging) return;
+    const newTop = e.clientY - offsetY;
+    badge.style.top = `${newTop}px`;
+    badge.style.right = "0";         // always fixed to right
+    badge.style.left = "auto";       // make sure left doesn't interfere
+  });
+
+  document.addEventListener("mouseup", function () {
+    if (isDragging) {
+      isDragging = false;
+      badge.style.transition = "right 0.5s"; // re-enable animation
+    }
+  });
 
   const img = document.createElement("img");
   img.src = chrome.runtime.getURL("bbb_logo1.png");
