@@ -60,8 +60,8 @@ class BBBController extends Controller
             return response()->json(['message' => 'Failed to reach BBB API'], 500);
         }
 
+        cd($response);
         $data = json_decode($response, true);
-        cd($data);
         if (!empty($data['searchResults'])) {
             $result = $data['searchResults'][0];
 
