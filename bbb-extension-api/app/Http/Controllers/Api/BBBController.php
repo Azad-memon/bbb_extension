@@ -61,7 +61,7 @@ class BBBController extends Controller
         }
 
         $data = json_decode($response, true);
-
+        cd($data);
         if (!empty($data['searchResults'])) {
             $result = $data['searchResults'][0];
 
