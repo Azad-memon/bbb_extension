@@ -17,13 +17,13 @@
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
-      "48": "bbb_logo.png"
+      "48": "bbb_logo1.png"
     }
   },
   "icons": {
-    "16": "bbb_logo.png",
-    "48": "bbb_logo.png",
-    "128": "bbb_logo.png"
+    "16": "bbb_logo1.png",
+    "48": "bbb_logo1.png",
+    "128": "bbb_logo1.png"
   },
   "content_scripts": [
     {
@@ -40,7 +40,9 @@
     {
       "resources": [
         "bbb_logo.png",
-        "bbb_logo1.png"
+        "bbb_logo1.png",
+        "not-accredited-icon.svg",
+        "BBB-icon.svg"
       ],
       "matches": [
         "<all_urls>"

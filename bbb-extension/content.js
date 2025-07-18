@@ -55,9 +55,14 @@ function createAndInjectFloatingBadge(data) {
       badge.style.transition = "right 0.5s"; // re-enable animation
     }
   });
-
   const img = document.createElement("img");
-  img.src = chrome.runtime.getURL("bbb_logo1.png");
+  if(data.isBBBAccredited == false)
+  {
+      img.src = chrome.runtime.getURL("not-accredited-icon.svg");
+  }else{
+      img.src = chrome.runtime.getURL("bbb_logo1.png");
+  }
+
   img.alt = "BBB";
   img.style.height = "20px";
 
@@ -213,7 +218,9 @@ function createAndInjectFloatingBadge(data) {
       logoContainer.style.gap = "6px";
 
       const logo = document.createElement("img");
-      logo.src = chrome.runtime.getURL("bbb_logo1.png");
+      logo.src = data.isBBBAccredited === false
+      ? chrome.runtime.getURL("not-accredited-icon.svg")
+      : chrome.runtime.getURL("bbb_logo1.png");
       logo.alt = "BBB Logo";
       logo.style.height = "20px";
 

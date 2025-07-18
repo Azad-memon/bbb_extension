@@ -9,22 +9,21 @@ function createAndInjectFloatingBadge(data) {
     position: fixed;
     top: 100px;
     right: -20px;
-    display: flex !important;
-    background: rgb(255, 255, 255);
-    color: rgb(0, 0, 0);
-    padding: 5px 10px 5px 5px;
-    border-radius: 5px 0px 0px 5px !important;
+    display: flex;
+    background: #fff;
+    color: #000;
+    padding: 5px;
+    border-radius: 5px 0 0 5px;
     font-size: 16px;
-    align-items: center !important;
+    align-items: center;
     font-weight: bold;
     z-index: 999999;
     box-shadow: rgba(0, 0, 0, 0.3) 0px 2px 6px;
     cursor: move;
-    gap: 5px;
+    gap: 8px;
     transition: right 0.5s;
   `;
 
-  // Slide in on hover
   badge.addEventListener("mouseenter", () => {
     badge.style.right = "0";
   });
@@ -33,43 +32,79 @@ function createAndInjectFloatingBadge(data) {
     badge.style.right = "-20px";
   });
 
-  // Vertical drag only
   let isDragging = false;
   let offsetY = 0;
 
   badge.addEventListener("mousedown", function (e) {
     isDragging = true;
     offsetY = e.clientY - badge.getBoundingClientRect().top;
-    badge.style.transition = "none"; // disable animation during drag
+    badge.style.transition = "none";
   });
 
   document.addEventListener("mousemove", function (e) {
     if (!isDragging) return;
     const newTop = e.clientY - offsetY;
     badge.style.top = `${newTop}px`;
-    badge.style.right = "0";         // always fixed to right
-    badge.style.left = "auto";       // make sure left doesn't interfere
+    badge.style.right = "0";
+    badge.style.left = "auto";
   });
 
   document.addEventListener("mouseup", function () {
     if (isDragging) {
       isDragging = false;
-      badge.style.transition = "right 0.5s"; // re-enable animation
+      badge.style.transition = "right 0.5s";
     }
   });
 
+  // Image
   const img = document.createElement("img");
-  img.src = chrome.runtime.getURL("bbb_logo1.png");
   img.alt = "BBB";
-  img.style.height = "20px";
+  img.style.height = "24px";
+  img.src = data.isBBBAccredited === false
+    ? chrome.runtime.getURL("not-accredited-icon.svg")
+    : chrome.runtime.getURL("bbb_logo1.png");
 
+  // Rating text
   const text = document.createElement("span");
-  text.textContent = ` ${data.bbbRating || "N/A"} ::`;
+  text.textContent = `${data.bbbRating || "N/A"}`;
 
+  // Learn More container with icon
+  const learnMoreContainer = document.createElement("a");
+  learnMoreContainer.href = data.profileUrl || "#";
+  learnMoreContainer.target = "_blank";
+  learnMoreContainer.style.cssText = `
+    background-color: #1d5d90;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 3px;
+    text-decoration: none;
+    font-size: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+  `;
+
+  // SVG icon above text
+  learnMoreContainer.innerHTML = `
+    <svg xmlns="http://www.w3.org/2000/svg" height="14" viewBox="0 0 24 24" width="14" fill="white">
+      <path d="M0 0h24v24H0V0z" fill="none"/>
+      <path d="M11 17h2v-6h-2v6zm0-8h2V7h-2v2zm1-7C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 
+      10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 
+      8-8 8 3.59 8 8-3.59 8-8 8z"/>
+    </svg>
+    <span>Learn More</span>
+  `;
+
+  // Final structure
   badge.appendChild(img);
   badge.appendChild(text);
+  badge.appendChild(learnMoreContainer);
   document.body.appendChild(badge);
 }
+
+
 
   
 
@@ -285,7 +320,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 ${businessName} is <br><span style="color: red;">NOT BBB Accredited.</span>
               </p>
               <hr style="border: none;border-top: 2px solid #006187;margin: 6px 0;">
-              <a href="https://www.bbb.org/search?find_country=USA&find_text=${encodeURIComponent(primaryCategory || 'Business')}" 
+              <a href="https://www.bbb.org/all/find-businesses-near-you" 
                  target="_blank" 
                  class="find-link" 
                  style="font-size: 13px; color: #0077cc; font-weight: 600;">
@@ -337,32 +372,26 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function renderStars(container, average) {
-    if (!container) return;
-    container.innerHTML = "";
+  if (!container) return;
+  container.innerHTML = "";
 
-    const avg = parseFloat(average) || 0;
-    const full = Math.floor(avg);
-    const half = avg % 1 >= 0.5 ? 1 : 0;
-    const empty = 5 - full - half;
+  const avg = parseFloat(average) || 0;
+  const full = Math.round(avg); // round instead of floor to avoid half
+  const empty = 5 - full;
 
-    for (let i = 0; i < full; i++) {
-      const star = document.createElement("span");
-      star.className = "star full";
-      container.appendChild(star);
-    }
-
-    if (half) {
-      const star = document.createElement("span");
-      star.className = "star half";
-      container.appendChild(star);
-    }
-
-    for (let i = 0; i < empty; i++) {
-      const star = document.createElement("span");
-      star.className = "star empty";
-      container.appendChild(star);
-    }
+  for (let i = 0; i < full; i++) {
+    const star = document.createElement("span");
+    star.className = "star full";
+    container.appendChild(star);
   }
+
+  for (let i = 0; i < empty; i++) {
+    const star = document.createElement("span");
+    star.className = "star empty";
+    container.appendChild(star);
+  }
+}
+
 });
 
 const closeBtn = document.querySelector(".close-btn");
