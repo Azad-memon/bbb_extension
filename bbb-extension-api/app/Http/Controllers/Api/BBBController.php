@@ -55,14 +55,22 @@ class BBBController extends Controller
         $response = curl_exec($curl);
         $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
         curl_close($curl);
-     
+
         if ($httpCode !== 200 || !$response) {
             return response()->json(['message' => 'Failed to reach BBB API'], 500);
         }
 
         $data = json_decode($response, true);
         if (!empty($data['searchResults'])) {
-            $result = $data['searchResults'][0];
+            $searchResults = $data['searchResults'];
+            $result = $searchResults[0]; 
+
+            foreach ($searchResults as $entry) {
+                if (!empty($entry['isHq']) && $entry['isHq'] === true) {
+                    $result = $entry;
+                    break;
+                }
+            }
 
             $isAccredited = $result['isBBBAccredited'] ?? false;
 
