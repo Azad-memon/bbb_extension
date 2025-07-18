@@ -1,16 +1,29 @@
 function createAndInjectFloatingBadge(data) {
   if (document.getElementById("bbb-rating-badge")) return;
 
+  // Inject @font-face style
+  const fontStyle = document.createElement("style");
+  fontStyle.textContent = `
+    @font-face {
+      font-family: 'proximanova_regular';
+      src: url(${chrome.runtime.getURL("proximanova_regular.ttf")}) format("truetype");
+      font-weight: normal;
+      font-style: normal;
+    }
+  `;
+  document.head.appendChild(fontStyle);
+
+  // Create badge
   const badge = document.createElement("div");
   badge.id = "bbb-rating-badge";
   badge.style.cssText = `
     position: fixed;
     top: 100px;
-    right: -20px;
+    right: -85px;
     display: flex;
     background: #fff;
     color: #000;
-    padding: 5px;
+    padding: 0px 0px 0px 5px;
     border-radius: 5px 0 0 5px;
     font-size: 16px;
     align-items: center;
@@ -20,16 +33,19 @@ function createAndInjectFloatingBadge(data) {
     cursor: move;
     gap: 8px;
     transition: right 0.5s;
+    font-family: 'proximanova_regular', sans-serif;
   `;
 
+  // Slide in/out
   badge.addEventListener("mouseenter", () => {
     badge.style.right = "0";
   });
 
   badge.addEventListener("mouseleave", () => {
-    badge.style.right = "-20px";
+    badge.style.right = "-85px";
   });
 
+  // Dragging functionality
   let isDragging = false;
   let offsetY = 0;
 
@@ -66,7 +82,7 @@ function createAndInjectFloatingBadge(data) {
   const text = document.createElement("span");
   text.textContent = `${data.bbbRating || "N/A"}`;
 
-  // Learn More container with icon
+  // Learn More button with icon
   const learnMoreContainer = document.createElement("a");
   learnMoreContainer.href = data.profileUrl || "#";
   learnMoreContainer.target = "_blank";
@@ -74,17 +90,17 @@ function createAndInjectFloatingBadge(data) {
     background-color: #1d5d90;
     color: white;
     padding: 4px 8px;
-    border-radius: 3px;
+    border-radius: 0px;
     text-decoration: none;
-    font-size: 12px;
+    font-size: 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 2px;
+    text-transform: uppercase;
+    font-family: 'proximanova_regular', sans-serif;
   `;
-
-  // SVG icon above text
   learnMoreContainer.innerHTML = `
     <svg xmlns="http://www.w3.org/2000/svg" height="14" viewBox="0 0 24 24" width="14" fill="white">
       <path d="M0 0h24v24H0V0z" fill="none"/>
@@ -95,7 +111,7 @@ function createAndInjectFloatingBadge(data) {
     <span>Learn More</span>
   `;
 
-  // Final structure
+  // Add elements to badge
   badge.appendChild(img);
   badge.appendChild(text);
   badge.appendChild(learnMoreContainer);
