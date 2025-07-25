@@ -1,3 +1,4 @@
+
 function createAndInjectFloatingBadge(data) {
   if (document.getElementById("bbb-rating-badge")) return;
 
@@ -45,7 +46,7 @@ function createAndInjectFloatingBadge(data) {
     badge.style.right = "-85px";
   });
 
-  // Dragging functionality
+  // Dragging
   let isDragging = false;
   let offsetY = 0;
 
@@ -70,7 +71,7 @@ function createAndInjectFloatingBadge(data) {
     }
   });
 
-  // Image
+  // BBB Image
   const img = document.createElement("img");
   img.alt = "BBB";
   img.style.height = "24px";
@@ -78,11 +79,31 @@ function createAndInjectFloatingBadge(data) {
     ? chrome.runtime.getURL("not-accredited-icon.svg")
     : chrome.runtime.getURL("bbb_logo1.png");
 
-  // Rating text
+  // BBB Rating
   const text = document.createElement("span");
   text.textContent = `${data.bbbRating || "N/A"}`;
 
-  // Learn More button with icon
+  // Star Rating with SVG
+  const textReview = document.createElement("span");
+  textReview.style.display = "flex";
+  textReview.style.alignItems = "center";
+  textReview.style.gap = "4px";
+
+  const starIcon = document.createElement("img");
+  starIcon.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 576 512'><path fill='%23FFA500' d='M316.9 18c-5.3-11-16.5-18-28.8-18s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329l-24.6 145.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329l104.2-103.1c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7l-143.7-21.2z'/></svg>";
+  starIcon.alt = "Star";
+  starIcon.style.height = "16px";
+  starIcon.style.width = "16px";
+
+  const ratingValue = document.createElement("span");
+  const avgRatingRaw = data?.reviews?.averageReviewStarRating;
+  const avgRating = avgRatingRaw != null ? Math.round(avgRatingRaw * 10) / 10 : "N/A";
+  ratingValue.textContent = avgRating ?? "N/A";
+
+  textReview.appendChild(starIcon);
+  textReview.appendChild(ratingValue);
+
+  // Learn More Button
   const learnMoreContainer = document.createElement("a");
   learnMoreContainer.href = data.profileUrl || "#";
   learnMoreContainer.target = "_blank";
@@ -104,16 +125,17 @@ function createAndInjectFloatingBadge(data) {
   learnMoreContainer.innerHTML = `
     <svg xmlns="http://www.w3.org/2000/svg" height="14" viewBox="0 0 24 24" width="14" fill="white">
       <path d="M0 0h24v24H0V0z" fill="none"/>
-      <path d="M11 17h2v-6h-2v6zm0-8h2V7h-2v2zm1-7C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 
-      10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 
+      <path d="M11 17h2v-6h-2v6zm0-8h2V7h-2v2zm1-7C6.48 2 2 6.48 2 12s4.48 10 10 
+      10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 
       8-8 8 3.59 8 8-3.59 8-8 8z"/>
     </svg>
     <span>Learn More</span>
   `;
 
-  // Add elements to badge
+  // Final assembly
   badge.appendChild(img);
   badge.appendChild(text);
+  badge.appendChild(textReview);
   badge.appendChild(learnMoreContainer);
   document.body.appendChild(badge);
 }
