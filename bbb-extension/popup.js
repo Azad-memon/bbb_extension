@@ -215,6 +215,28 @@ document.addEventListener("DOMContentLoaded", () => {
       let attempts = 0;
       const maxAttempts = 50;
 
+      const specialBBBDomains = [
+        "bbbprograms.org",
+        "give.org",
+        "bbbmarketplacetrust.org",
+        "www.bbb.org",
+        "bbb.org"
+      ];
+
+      const isSpecialBBBDomain = specialBBBDomains.some(domain => currentDomain.includes(domain));
+
+      if (isSpecialBBBDomain) {
+        loaderElement.style.display = "none";
+        errorMessageElement.style.display = "none";
+        bbbDataElement.style.display = "none";
+        document.getElementById("newDesignContainer").style.display = "block";
+      const fullUrl = "https://" + currentDomain;
+      const businessUrlElement = document.getElementById("c-businessUrl");
+      businessUrlElement.href = fullUrl;
+      businessUrlElement.textContent = currentDomain;
+        return;
+      }
+
       const pollInterval = setInterval(() => {
         chrome.storage.local.get([currentDomain], (result) => {
           const domainData = result[currentDomain];
@@ -353,13 +375,14 @@ document.addEventListener("DOMContentLoaded", () => {
           } else {
             accreditedBox?.classList.add("hidden-section");
             notAccreditedBox?.classList.remove("hidden-section");
-
+            let newUrl=`https://www.bbb.org/search?find_text=${primaryCategory}`;
+            document.getElementById("not-acreditted-business-a").href=newUrl;
             summaryAccreditedBox.innerHTML = `
               <p class="small-title1" style="font-weight: bold;">
                 ${businessName} is <br><span style="color: red;">NOT BBB Accredited.</span>
               </p>
               <hr style="border: none;border-top: 2px solid #006187;margin: 6px 0;">
-              <a href="https://www.bbb.org/all/find-businesses-near-you" 
+              <a href="${newUrl}" 
                  target="_blank" 
                  class="find-link" 
                  style="font-size: 13px; color: #0077cc; font-weight: 600;">
@@ -439,3 +462,7 @@ if (closeBtn) {
     window.close();
   });
 }
+
+
+    
+

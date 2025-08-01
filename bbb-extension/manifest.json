@@ -43,7 +43,8 @@
         "bbb_logo1.png",
         "not-accredited-icon.svg",
         "BBB-icon.svg",
-        "fonts/proximanova_regular.ttf"
+        "fonts/proximanova_regular.ttf",
+        "AB-seal-horz.svg"
       ],
       "matches": [
         "<all_urls>"
