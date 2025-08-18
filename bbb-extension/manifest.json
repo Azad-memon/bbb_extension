@@ -17,12 +17,12 @@
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
-      "128": "bbb_logo1.png"
+      "48": "BBB.png"
     }
   },
   "icons": {
     "16": "bbb_logo1.png",
-    "48": "bbb_logo1.png",
+    "48": "BBB.png",
     "128": "bbb_logo1.png"
   },
   "content_scripts": [
