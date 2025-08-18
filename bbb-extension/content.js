@@ -1,5 +1,23 @@
-
 function createAndInjectFloatingBadge(data) {
+  const blockedDomains = [
+    "bbbprograms.org",
+    "give.org",
+    "bbbmarketplacetrust.org",
+    "bbb.org",
+    "google.com",
+  ];
+
+  // helper fn to check host
+  const isBlocked = (hostname) => {
+    if (!hostname) return false;
+    hostname = hostname.replace(/^www\./, ""); // www hatao
+    return blockedDomains.some(
+      (domain) => hostname === domain || hostname.endsWith("." + domain)
+    );
+  };
+  if (isBlocked(window.location.hostname)) {
+    return false;
+  }
   if (document.getElementById("bbb-rating-badge")) return;
 
   // Inject @font-face style
@@ -7,7 +25,9 @@ function createAndInjectFloatingBadge(data) {
   fontStyle.textContent = `
     @font-face {
       font-family: 'proximanova_regular';
-      src: url(${chrome.runtime.getURL("proximanova_regular.ttf")}) format("truetype");
+      src: url(${chrome.runtime.getURL(
+        "proximanova_regular.ttf"
+      )}) format("truetype");
       font-weight: normal;
       font-style: normal;
     }
@@ -75,33 +95,35 @@ function createAndInjectFloatingBadge(data) {
   const img = document.createElement("img");
   img.alt = "BBB";
   img.style.height = "24px";
-  img.src = data.isBBBAccredited === false
-    ? chrome.runtime.getURL("not-accredited-icon.svg")
-    : chrome.runtime.getURL("bbb_logo1.png");
+  img.src =
+    data.isBBBAccredited === false
+      ? chrome.runtime.getURL("not-accredited-icon.svg")
+      : chrome.runtime.getURL("bbb_logo1.png");
 
   // BBB Rating
   const text = document.createElement("span");
   text.textContent = `${data.bbbRating || "N/A"}`;
 
-  // Star Rating with SVG
-  const textReview = document.createElement("span");
-  textReview.style.display = "flex";
-  textReview.style.alignItems = "center";
-  textReview.style.gap = "4px";
+  // // Star Rating with SVG
+  // const textReview = document.createElement("span");
+  // textReview.style.display = "flex";
+  // textReview.style.alignItems = "center";
+  // textReview.style.gap = "4px";
 
-  const starIcon = document.createElement("img");
-  starIcon.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 576 512'><path fill='%23FFA500' d='M316.9 18c-5.3-11-16.5-18-28.8-18s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329l-24.6 145.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329l104.2-103.1c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7l-143.7-21.2z'/></svg>";
-  starIcon.alt = "Star";
-  starIcon.style.height = "16px";
-  starIcon.style.width = "16px";
+  // const starIcon = document.createElement("img");
+  // starIcon.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 576 512'><path fill='%23FFA500' d='M316.9 18c-5.3-11-16.5-18-28.8-18s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329l-24.6 145.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329l104.2-103.1c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7l-143.7-21.2z'/></svg>";
+  // starIcon.alt = "Star";
+  // starIcon.style.height = "16px";
+  // starIcon.style.width = "16px";
 
   const ratingValue = document.createElement("span");
   const avgRatingRaw = data?.reviews?.averageReviewStarRating;
-  const avgRating = avgRatingRaw != null ? Math.round(avgRatingRaw * 10) / 10 : "N/A";
+  const avgRating =
+    avgRatingRaw != null ? Math.round(avgRatingRaw * 10) / 10 : "N/A";
   ratingValue.textContent = avgRating ?? "N/A";
 
-  textReview.appendChild(starIcon);
-  textReview.appendChild(ratingValue);
+  // textReview.appendChild(starIcon);
+  // textReview.appendChild(ratingValue);
 
   // Learn More Button
   const learnMoreContainer = document.createElement("a");
@@ -135,7 +157,7 @@ function createAndInjectFloatingBadge(data) {
   // Final assembly
   badge.appendChild(img);
   badge.appendChild(text);
-  badge.appendChild(textReview);
+  // badge.appendChild(textReview);
   badge.appendChild(learnMoreContainer);
   document.body.appendChild(badge);
 }
@@ -147,47 +169,55 @@ function createAndInjectFloatingBadge(data) {
     const isEnabled = res.showBBB === true;
 
     if (isEnabled) {
-      chrome.runtime.sendMessage({ action: "GET_DOMAIN_DATA_FORCE", domain: currentDomain }, (response) => {
-        const data = response?.data;
-        if (data) {
-          createAndInjectFloatingBadge(data); // ✅ reused here
+      chrome.runtime.sendMessage(
+        { action: "GET_DOMAIN_DATA_FORCE", domain: currentDomain },
+        (response) => {
+          const data = response?.data;
+          if (data) {
+            createAndInjectFloatingBadge(data); // ✅ reused here
+          }
         }
-      });
+      );
     }
   });
 
   // Only continue for Google Search
-  if (!location.hostname.includes("google.com") || !location.pathname.startsWith("/search")) return;
+  if (
+    !location.hostname.includes("google.com") ||
+    !location.pathname.startsWith("/search")
+  )
+    return;
 
   chrome.storage.local.get("showBBB", (res) => {
     const isEnabled = res.showBBB === true;
     if (!isEnabled) return;
 
     function getBaseDomain(hostname) {
-      const parts = hostname.split('.');
-      const commonTLDs = ['co.uk', 'com.au', 'co.in'];
+      const parts = hostname.split(".");
+      const commonTLDs = ["co.uk", "com.au", "co.in"];
       if (parts.length >= 2) {
-        const tld = parts.slice(-2).join('.');
+        const tld = parts.slice(-2).join(".");
         if (commonTLDs.includes(tld) && parts.length >= 3) {
-          return parts.slice(-3).join('.');
+          return parts.slice(-3).join(".");
         }
         return tld;
       }
       return hostname;
     }
 
-    const anchors = Array.from(document.querySelectorAll("a"))
-      .filter(a => a.href.startsWith("http") && !a.href.includes("google.com"));
+    const anchors = Array.from(document.querySelectorAll("a")).filter(
+      (a) => a.href.startsWith("http") && !a.href.includes("google.com")
+    );
 
     const domainMap = new Map();
 
-    anchors.forEach(anchor => {
+    anchors.forEach((anchor) => {
       try {
         const domain = new URL(anchor.href).hostname;
         const base = getBaseDomain(domain);
         if (!domainMap.has(base)) domainMap.set(base, []);
         domainMap.get(base).push(anchor);
-      } catch { }
+      } catch {}
     });
 
     const domains = Array.from(domainMap.keys());
@@ -199,10 +229,10 @@ function createAndInjectFloatingBadge(data) {
     let attempts = 0;
 
     const poll = setInterval(() => {
-      chrome.storage.local.get(domains, results => {
+      chrome.storage.local.get(domains, (results) => {
         let allDone = true;
 
-        domains.forEach(domain => {
+        domains.forEach((domain) => {
           const result = results[domain];
           if (!result || result.loader === true) {
             allDone = false;
@@ -214,8 +244,10 @@ function createAndInjectFloatingBadge(data) {
             const element = createBBBElement(data);
             const injectedContainers = new Set();
 
-            (domainMap.get(domain) || []).forEach(anchor => {
-              let container = anchor.closest(".MjjYud, .BYM4Nd, .g, .tF2Cxc, .uEierd, .srKDX");
+            (domainMap.get(domain) || []).forEach((anchor) => {
+              let container = anchor.closest(
+                ".MjjYud, .BYM4Nd, .g, .tF2Cxc, .uEierd, .srKDX"
+              );
 
               if (!container) {
                 let temp = anchor;
@@ -235,21 +267,29 @@ function createAndInjectFloatingBadge(data) {
               }
 
               if (!container || container.closest("#rhs")) return;
-              if (injectedContainers.has(container) || container.querySelector(".bbb-result")) return;
+              if (
+                injectedContainers.has(container) ||
+                container.querySelector(".bbb-result")
+              )
+                return;
 
               injectedContainers.add(container);
               container.appendChild(element.cloneNode(true));
             });
 
-            if (attempts === 1 && data && !document.querySelector(".bbb-floating-badge")) {
+            if (
+              attempts === 1 &&
+              data &&
+              !document.querySelector(".bbb-floating-badge")
+            ) {
               createAndInjectFloatingBadge(data); // ✅ reused here too
             }
 
             chrome.storage.local.set({
               [domain]: {
                 ...result,
-                _injected: false
-              }
+                _injected: false,
+              },
             });
           }
         });
@@ -284,9 +324,10 @@ function createAndInjectFloatingBadge(data) {
       logoContainer.style.gap = "6px";
 
       const logo = document.createElement("img");
-      logo.src = data.isBBBAccredited === false
-      ? chrome.runtime.getURL("not-accredited-icon.svg")
-      : chrome.runtime.getURL("bbb_logo1.png");
+      logo.src =
+        data.isBBBAccredited === false
+          ? chrome.runtime.getURL("not-accredited-icon.svg")
+          : chrome.runtime.getURL("bbb_logo1.png");
       logo.alt = "BBB Logo";
       logo.style.height = "20px";
 
@@ -312,7 +353,9 @@ function createAndInjectFloatingBadge(data) {
       reviews.textContent = `${data.reviews?.totalCustomReviews || 0} reviews`;
 
       const complaints = document.createElement("span");
-      complaints.textContent = `${data.reviews?.totalComplaints || 0} complaints`;
+      complaints.textContent = `${
+        data.reviews?.totalComplaints || 0
+      } complaints`;
 
       stats.innerHTML = `| `;
       stats.appendChild(reviews);
@@ -339,7 +382,5 @@ function createAndInjectFloatingBadge(data) {
 
       return wrapper;
     }
-
-
   });
 })();

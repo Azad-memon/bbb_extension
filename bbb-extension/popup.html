@@ -1,177 +1,257 @@
 <!DOCTYPE html>
 <html lang="en" style="overflow: hidden">
+  <head>
+    <meta charset="UTF-8" />
+    <title>BBB Status</title>
+    <link rel="stylesheet" href="popup.css" />
+    <style>
+      @font-face {
+        font-family: "proximanova_regular";
+        src: url(proximanova_regular.ttf);
+      }
 
-<head>
-  <meta charset="UTF-8" />
-  <title>BBB Status</title>
-  <link rel="stylesheet" href="popup.css" />
-  <style>
-    @font-face {
-      font-family:'proximanova_regular';
-      src: url(proximanova_regular.ttf);
-    }
+      body {
+        font-family: "proximanova_regular" !important;
+      }
+    </style>
+  </head>
 
-    body {
-      font-family:'proximanova_regular' !important;
-    }
-
-  </style>
-</head>
-
-<body>
-
-  <!-- Header -->
-  <div class="bbb-header">
-    <img src="bbb_logo.png" alt="BBB Logo" class="bbb-logo-static" />
-    <div class="headericons">
-      <span class="close-btn">✕</span>
+  <body>
+    <!-- Header -->
+    <div class="bbb-header">
+      <img src="bbb_logo.png" alt="BBB Logo" class="bbb-logo-static" />
+      <div class="headericons">
+        <span class="close-btn">✕</span>
+      </div>
     </div>
-  </div>
 
-  <!-- Main Container -->
-  <div class="bbb-container-wrapper" id="main-container">
-    <div class="bbb-container">
-      <div class="popup-wrapper">
-
-        <!-- Loader -->
-        <div class="loader" id="loader">
-          <!-- <img src="bbb_logo.png" class="loader-icon" /> -->
-        </div>
-    <!-- New Design Section -->
-        <div id="newDesignContainer" class="new-design-box" style="display: none;
-   ">
-           <div class="business-info">
-            <div class="innerbusinfo">
-              <div class="innerbustext">
-                <h1 id="businessName">Better Business Bureau</h1>
-                <a class="website" href="#" id="c-businessUrl">website.com</a>
-              </div>
-
-              <!-- Accredited -->
-              <div class="innerbusimg" >
-                <img src="AB-seal-horz.svg" alt="Accredited Logo" class="logo-dynamic"  width="155" height="50" />
-                <p class="business-info-text" style="text-align: center;">
-                  <a href="https://www.bbb.org/all/about-bbb">Est. 1912 - Learn about BBB</a>
-                </p>
-              </div>
-              
-
-            
-            </div>
-            <i style="font-weight: bold;">There are not BBB profiles for BBB sites or programs.</i>
+    <!-- Main Container -->
+    <div class="bbb-container-wrapper" id="main-container">
+      <div class="bbb-container">
+        <div class="popup-wrapper">
+          <!-- Loader -->
+          <div class="loader" id="loader">
+            <!-- <img src="bbb_logo.png" class="loader-icon" /> -->
           </div>
-           <p style="FONT-SIZE: 14PX;font-weight: bold;">Would you like to learn more about BBB or ask us a question?</p>
-          <p  style="FONT-SIZE: 14PX;font-weight: bold;">Click the link below to look up your local Better Business Bureau.</p>
-          <a class="view-btn" style="margin-bottom: 10px;" href="https://www.bbb.org/near-me" target="_blank">
-            Find my local BBB
-          </a>
-        </div>
+          <!-- New Design Section -->
+          <div
+            id="newDesignContainer"
+            class="new-design-box"
+            style="display: none"
+          >
+            <div class="business-info">
+              <div class="innerbusinfo">
+                <div class="innerbustext">
+                  <h1 id="businessName">Better Business Bureau</h1>
+                  <a class="website" href="#" id="c-businessUrl">website.com</a>
+                </div>
 
-        <!-- BBB Data -->
-        <div id="bbbData" style="display: none;">
-          <!-- Business Info -->
-          <div class="business-info">
-            <div class="innerbusinfo">
-              <div class="innerbustext">
-                <h1 id="businessName">Business Name</h1>
-                <a class="website" href="#" id="businessUrl">website.com</a>
+                <!-- Accredited -->
+                <div class="innerbusimg">
+                  <img
+                    src="AB-seal-horz.svg"
+                    alt="Accredited Logo"
+                    class="logo-dynamic"
+                    width="155"
+                    height="50"
+                  />
+                  <p class="business-info-text" style="text-align: center">
+                    <a href="https://www.bbb.org/all/about-bbb" target="_blank"
+                      >Est. 1912 - Learn about BBB</a
+                    >
+                  </p>
+                </div>
               </div>
-
-              <!-- Accredited -->
-              <div class="innerbusimg" id="accreditedBox">
-                <img src="" alt="Accredited Logo" class="logo-dynamic" id="logoUrl" width="155" height="50" />
-                <p class="business-info-text">
-                  Accredited since <span id="accreditationDate">--</span>
-                </p>
-              </div>
-
-              <!-- Not Accredited -->
-              <div class="innerbusimg hidden-section" id="notAccreditedBox">
-                <p class="business-info-text" style="color: red; font-weight: bold;">
-                  NOT BBB Accredited
-                </p>
-                <a href="https://www.bbb.org/near-me" id="not-acreditted-business-a" target="_blank" class="find-link" style="font-size: 12px;">
-                  Find Accredited Businesses
-                </a>
-              </div>
+              <i style="font-weight: bold"
+                >There are not BBB profiles for BBB sites or programs.</i
+              >
             </div>
-
-            <p class="services" id="primaryCategory">Products and Services - Category</p>
-            <a class="view-btn" target="_blank" href="#" id="profileUrl">
-              <svg width="25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <p style="font-size: 14px; font-weight: bold">
+              Would you like to learn more about BBB or ask us a question?
+            </p>
+            <p style="font-size: 14px; font-weight: bold">
+              Click the link below to look up your local Better Business Bureau.
+            </p>
+            <a
+              class="view-btn"
+              style="margin-bottom: 10px"
+              href="https://www.bbb.org/bbb-directory"
+              target="_blank"
+            >
+              <svg
+                width="25px"
+                height="25px"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
                 <g id="Interface / External_Link">
-                  <path id="Vector"
+                  <path
+                    id="Vector"
                     d="M10.0002 5H8.2002C7.08009 5 6.51962 5 6.0918 5.21799C5.71547 5.40973 5.40973 5.71547 5.21799 6.0918C5 6.51962 5 7.08009 5 8.2002V15.8002C5 16.9203 5 17.4801 5.21799 17.9079C5.40973 18.2842 5.71547 18.5905 6.0918 18.7822C6.5192 19 7.07899 19 8.19691 19H15.8031C16.921 19 17.48 19 17.9074 18.7822C18.2837 18.5905 18.5905 18.2839 18.7822 17.9076C19 17.4802 19 16.921 19 15.8031V14M20 9V4M20 4H15M20 4L13 11"
-                    stroke="#215fdb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    stroke="#215fdb"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
                 </g>
               </svg>
-              VIEW ON BBB.org
+              Find my local BBB
             </a>
           </div>
 
-          <!-- Rating Summary -->
-          <div class="summary-grid">
-            <!-- Accreditation summary (this will be dynamically changed via JS) -->
-            <div class="box left accreditation-box">
-              <p class="small-title" id="accreditationText">
-                <span id="businessName">Business Name</span> is BBB Accredited.
+          <!-- BBB Data -->
+          <div id="bbbData" style="display: none">
+            <!-- Business Info -->
+            <div class="business-info">
+              <div class="innerbusinfo">
+                <div class="innerbustext">
+                  <h1 id="businessName">Business Name</h1>
+                  <a class="website" href="#" id="businessUrl">website.com</a>
+                </div>
+
+                <!-- Accredited -->
+                <div class="innerbusimg" id="accreditedBox">
+                  <img
+                    src=""
+                    alt="Accredited Logo"
+                    class="logo-dynamic"
+                    id="logoUrl"
+                    width="155"
+                    height="50"
+                  />
+                  <p class="business-info-text">
+                    Accredited since <span id="accreditationDate">--</span>
+                  </p>
+                </div>
+
+                <!-- Not Accredited -->
+                <div class="innerbusimg hidden-section" id="notAccreditedBox">
+                  <p
+                    class="business-info-text"
+                    style="color: red; font-weight: bold"
+                  >
+                    NOT BBB Accredited
+                  </p>
+                  <a
+                    href="https://www.bbb.org/near-me"
+                    id="not-acreditted-business-a"
+                    target="_blank"
+                    class="find-link"
+                    style="font-size: 12px"
+                  >
+                    Find Accredited Businesses
+                  </a>
+                </div>
+              </div>
+
+              <p class="services" id="primaryCategory">
+                Products and Services - Category
               </p>
-              <div class="accreditation-logo-wrapper">
-                <img src="" alt="Rating Icon" class="logo-dynamic" id="ratingIcon" width="180" height="60" />
+              <a class="view-btn" target="_blank" href="#" id="profileUrl">
+                <svg
+                  width="25px"
+                  height="25px"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <g id="Interface / External_Link">
+                    <path
+                      id="Vector"
+                      d="M10.0002 5H8.2002C7.08009 5 6.51962 5 6.0918 5.21799C5.71547 5.40973 5.40973 5.71547 5.21799 6.0918C5 6.51962 5 7.08009 5 8.2002V15.8002C5 16.9203 5 17.4801 5.21799 17.9079C5.40973 18.2842 5.71547 18.5905 6.0918 18.7822C6.5192 19 7.07899 19 8.19691 19H15.8031C16.921 19 17.48 19 17.9074 18.7822C18.2837 18.5905 18.5905 18.2839 18.7822 17.9076C19 17.4802 19 16.921 19 15.8031V14M20 9V4M20 4H15M20 4L13 11"
+                      stroke="#215fdb"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </g>
+                </svg>
+                VIEW ON BBB.org
+              </a>
+            </div>
+
+            <!-- Rating Summary -->
+            <div class="summary-grid">
+              <!-- Accreditation summary (this will be dynamically changed via JS) -->
+              <div class="box left accreditation-box">
+                <p class="small-title" id="accreditationText">
+                  <span id="businessName">Business Name</span> is BBB
+                  Accredited.
+                </p>
+                <div class="accreditation-logo-wrapper">
+                  <img
+                    src=""
+                    alt="Rating Icon"
+                    class="logo-dynamic"
+                    id="ratingIcon"
+                    width="180"
+                    height="60"
+                  />
+                </div>
+              </div>
+
+              <!-- Rating -->
+              <div class="box right">
+                <p class="grade" id="bbbRating">A+</p>
+                <p class="rating-label">BBB Rating</p>
+                <a href="#" class="reason-link" id="ratingReasonLink"
+                  >Reason for rating ℹ️</a
+                >
               </div>
             </div>
 
-            <!-- Rating -->
-            <div class="box right">
-              <p class="grade" id="bbbRating">A+</p>
-              <p class="rating-label">BBB Rating</p>
-              <a href="#" class="reason-link" id="ratingReasonLink">Reason for rating ℹ️</a>
-            </div>
-          </div>
-
-          <!-- Reviews & Complaints -->
-          <div class="rating-summary-fixed">
-            <div class="review-box-fixed">
-              <p class="section-title">Customer Review Rating</p>
-              <div class="stars-row">
-                <div class="star-rating" id="starRatingContainer"></div>
-                <span class="rating-number" id="avgRating">0.0/5</span>
+            <!-- Reviews & Complaints -->
+            <div class="rating-summary-fixed">
+              <div class="review-box-fixed">
+                <p class="section-title">Customer Review Rating</p>
+                <div class="stars-row">
+                  <div class="star-rating" id="starRatingContainer"></div>
+                  <span class="rating-number" id="avgRating">0.0/5</span>
+                </div>
+                <p class="review-count" id="totalReviews">
+                  Average of 0 Customer Reviews
+                </p>
               </div>
-              <p class="review-count" id="totalReviews">Average of 0 Customer Reviews</p>
-            </div>
 
-            <div class="complaint-box-fixed">
-              <p class="section-title">Customer Complaint Summary</p>
-              <p><strong id="complaints12mo">0</strong> complaints closed in the last 12 months.</p>
-              <p><strong id="complaints3yr">0</strong> total complaints in the last 3 years.</p>
+              <div class="complaint-box-fixed">
+                <p class="section-title">Customer Complaint Summary</p>
+                <p>
+                  <strong id="complaints12mo">0</strong> complaints closed in
+                  the last 12 months.
+                </p>
+                <p>
+                  <strong id="complaints3yr">0</strong> total complaints in the
+                  last 3 years.
+                </p>
+              </div>
             </div>
           </div>
-        </div>
 
-        <!-- Error State -->
-        <div id="errorMessage" class="error-box" style="display: none;">
-          <h3>🚫 No Business ID Found</h3>
-          <p>
-            We couldn't find a BBB listing for this website.<br />
-            It may not be registered or accredited by the Better Business Bureau.
-          </p>
+          <!-- Error State -->
+          <div id="errorMessage" class="error-box" style="display: none">
+            <h3>🚫 No Business ID Found</h3>
+            <p>
+              We couldn't find a BBB listing for this website.<br />
+              It may not be registered or accredited by the Better Business
+              Bureau.
+            </p>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- Footer -->
-  <div class="footer-fixed">
-    <div class="innerfooter">
-      <span>Show BBB status while browsing</span>
-      <label class="switch">
-        <input type="checkbox" />
-        <span class="slider"></span>
-      </label>
+    <!-- Footer -->
+    <div class="footer-fixed">
+      <div class="innerfooter">
+        <span>Show BBB status while browsing</span>
+        <label class="switch">
+          <input type="checkbox" />
+          <span class="slider"></span>
+        </label>
+      </div>
     </div>
-  </div>
 
-  <script src="popup.js"></script>
-</body>
-
+    <script src="popup.js"></script>
+  </body>
 </html>
