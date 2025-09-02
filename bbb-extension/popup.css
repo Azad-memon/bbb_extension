@@ -348,12 +348,14 @@ body {
 }
 
 .reason-link {
-  font-size: 13px;
-  text-decoration: none;
-  font-weight: 600;
-  color: #0077cc;
-  display: inline-block;
-  margin-top: 8px;
+    font-size: 13px;
+    text-decoration: none;
+    font-weight: 600;
+    color: #0077cc;
+    display: flex;
+    margin-top: 8px;
+    align-items: center;
+    gap: 5px;
 }
 
 .accreditation-logo-wrapper {
