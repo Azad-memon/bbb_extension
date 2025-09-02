@@ -321,7 +321,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <hr />
                 <p class="suggest-text">Would you like to tell us about your experience with this business?</p>
                 <p class="submittext">Submit a request to add a new BBB Business Profile.</p>
-                <a class="view-btn notbtn" href="https://www.bbb.org/RequestABusiness" target="_blank">
+                <a class="view-btn notbtn" href="https://www.bbb.org/get-listed" target="_blank">
                   <svg width="25px" height="25px" viewBox="0 0 24 24" fill="none"
                     xmlns="http://www.w3.org/2000/svg">
                     <g id="Interface / External_Link">
@@ -360,6 +360,7 @@ document.addEventListener("DOMContentLoaded", () => {
           });
 
           document.getElementById("businessName").innerText = businessName || "-";
+          document.getElementById("businessNameHeading").innerText = businessName || "-";
 
           const businessUrlEl = document.getElementById("businessUrl");
           if (businessUrlEl) {
@@ -412,8 +413,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
           document.getElementById("primaryCategory").innerText = `Products and Services - ${primaryCategory || "-"}`;
           document.getElementById("profileUrl").href = profileUrl || "#";
-          document.getElementById("ratingReasonLink").href = profileUrl || "#";
+          // document.getElementById("ratingReasonLink").href = profileUrl || "#";
           document.getElementById("bbbRating").innerText = bbbRating || "-";
+          
 
           const avgRating = Number(reviews?.averageReviewStarRating || 0).toFixed(1);
           const totalReviews = reviews?.totalCustomReviews || 0;

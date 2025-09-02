@@ -204,10 +204,18 @@ function createAndInjectFloatingBadge(data) {
       }
       return hostname;
     }
+    const blockedDomains = [
+      "bbbprograms.org",
+      "give.org",
+      "bbbmarketplacetrust.org",
+      "bbb.org",
+      "google.com",
+    ];
 
-    const anchors = Array.from(document.querySelectorAll("a")).filter(
-      (a) => a.href.startsWith("http") && !a.href.includes("google.com")
-    );
+    const anchors = Array.from(document.querySelectorAll("a")).filter((a) => {
+      if (!a.href.startsWith("http")) return false;
+      return !blockedDomains.some((blocked) => a.href.includes(blocked));
+    });
 
     const domainMap = new Map();
 
