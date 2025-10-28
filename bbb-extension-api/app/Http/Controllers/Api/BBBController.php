@@ -72,6 +72,8 @@ class BBBController extends Controller
                 }
             }
 
+            $primaryBusinessURL=$result['primaryBusinessURL'];
+
             $isAccredited = $result['isBBBAccredited'] ?? false;
 
             $responseData = [
@@ -93,7 +95,8 @@ class BBBController extends Controller
                 'logoUrl' => $isAccredited ? URL::to('/bbb_logo.svg') : null,
                 'businessId' => $result['businessId'] ?? null,
                 'bbbId' => $result['bbbId'] ?? null,
-                'businessUrl' => $businessUrl ?? null,
+                'primaryBusinessURL' => $primaryBusinessURL ?? null,
+                    // 'businessUrl' => $businessUrl ?? null,
 
             ];
 
