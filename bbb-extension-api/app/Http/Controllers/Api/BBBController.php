@@ -14,6 +14,7 @@ class BBBController extends Controller
         $apiKey = env('API_KEY');
         $businessUrl = $request->input('url');
 
+
         $domainExceptions = [
             'mail.google.com' => 'gmail.com',
             'shopify.myshopify.com' => 'shopify.com',
@@ -39,22 +40,43 @@ class BBBController extends Controller
                 $businessUrl = 'https://' . $parsedHost; // Already a root domain
             }
         }
+        $getBussiness = getBusinessInfoByUrl($businessUrl);
 
-        $endpoint = "https://api.bbb.org/v2/orgs/search?BusinessURL=" . urlencode($businessUrl);
-        $curl = curl_init();
+        if (empty($getBussiness)) {
+            $endpoint = "https://api.bbb.org/v2/orgs/search?BusinessURL=" . urlencode($businessUrl);
+            $curl = curl_init();
 
-        curl_setopt_array($curl, [
-            CURLOPT_URL => $endpoint,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_HTTPHEADER => [
-                "Authorization: Bearer $apiKey",
-                "Accept: application/json"
-            ]
-        ]);
+            curl_setopt_array($curl, [
+                CURLOPT_URL => $endpoint,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_HTTPHEADER => [
+                    "Authorization: Bearer $apiKey",
+                    "Accept: application/json"
+                ]
+            ]);
 
-        $response = curl_exec($curl);
-        $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-        curl_close($curl);
+            $response = curl_exec($curl);
+            $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+            curl_close($curl);
+        } else {
+            $endpoint = "https://api.bbb.org/v2/orgs/search?businessId=" . $getBussiness['BusinessId'] . "&bbbId=" . $getBussiness['BbbId'];
+
+            $curl = curl_init();
+
+            curl_setopt_array($curl, [
+                CURLOPT_URL => $endpoint,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_HTTPHEADER => [
+                    "Authorization: Bearer $apiKey",
+                    "Accept: application/json"
+                ]
+            ]);
+
+            $response = curl_exec($curl);
+            $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+            curl_close($curl);
+        }
+
 
         if ($httpCode !== 200 || !$response) {
             return response()->json(['message' => 'Failed to reach BBB API'], 500);
@@ -63,7 +85,7 @@ class BBBController extends Controller
         $data = json_decode($response, true);
         if (!empty($data['searchResults'])) {
             $searchResults = $data['searchResults'];
-            $result = $searchResults[0]; 
+            $result = $searchResults[0];
 
             foreach ($searchResults as $entry) {
                 if (!empty($entry['isHq']) && $entry['isHq'] === true) {
@@ -72,7 +94,7 @@ class BBBController extends Controller
                 }
             }
 
-            $primaryBusinessURL=$result['primaryBusinessURL'];
+            $primaryBusinessURL = $result['primaryBusinessURL'];
 
             $isAccredited = $result['isBBBAccredited'] ?? false;
 
@@ -96,7 +118,7 @@ class BBBController extends Controller
                 'businessId' => $result['businessId'] ?? null,
                 'bbbId' => $result['bbbId'] ?? null,
                 'primaryBusinessURL' => $primaryBusinessURL ?? null,
-                    // 'businessUrl' => $businessUrl ?? null,
+                // 'businessUrl' => $businessUrl ?? null,
 
             ];
 

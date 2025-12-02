@@ -403,12 +403,116 @@ if (!function_exists('getGroupWinVerbages')) {
 
 
 
+
+
 }
 
 
 
 
 
+
+if (!function_exists('getBusinessInfoByUrl')) {
+    function getBusinessInfoByUrl($url) {
+        $platforms = [
+            "https://instagram.com" => [
+                "BusinessId" => 444438,
+                "BbbId" => '1116'
+            ],
+            "https://youtube.com" => [
+                "BusinessId" => 925576,
+                "BbbId" => '1116'
+            ],
+            "https://meta.com" => [
+                "BusinessId" => 385674,
+                "BbbId" => '1116'
+            ],
+            "https://tiktok.com" => [
+                "BusinessId" => 1074502,
+                "BbbId" => '1216'
+            ],
+            "https://whatsapp.com" => [
+                "BusinessId" => 888229,
+                "BbbId" => '1116'
+            ],
+            "https://pinterest.com" => [
+                "BusinessId" => 448073,
+                "BbbId" => '1116'
+            ],
+            "https://x.com" => [
+                "BusinessId" => 1000230350,
+                "BbbId" => '0825'  // This is treated as a string now
+            ],
+            "https://discord.com" => [
+                "BusinessId" => 918699,
+                "BbbId" => '1116'
+            ],
+            "https://trustpilot.com" => [
+                "BusinessId" => 149835,
+                "BbbId" => '0121'  // This is treated as a string now
+            ],
+            "https://g2.com" => [
+                "BusinessId" => 88700123,
+                "BbbId" => '0654'
+            ],
+            "https://amazon.com" => [
+                "BusinessId" => 7039385,
+                "BbbId" => '1296'
+            ],
+            "https://nextdoor.com" => [
+                "BusinessId" => 447229,
+                "BbbId" => '1116'
+            ],
+            "https://creditkarma.com" => [
+                "BusinessId" => 295805,
+                "BbbId" => '1116'
+            ],
+            "https://mailchimp.com" => [
+                "BusinessId" => 5001250,
+                "BbbId" => '0443'
+            ],
+            "https://turbotax.com" => [
+                "BusinessId" => 14002736,
+                "BbbId" => '1296'
+            ],
+            "https://intuit.com" => [
+                "BusinessId" => 202832,
+                "BbbId" => '1216'
+            ],
+            "https://quickbooks.com" => [
+                "BusinessId" => 202832,
+                "BbbId" => '1216'
+            ],
+            "https://birdeye.com" => [
+                "BusinessId" => 416252,
+                "BbbId" => '1216'
+            ],
+            "https://glassdoor.com" => [
+                "BusinessId" => 385791,
+                "BbbId" => '1116'
+            ],
+            "https://yelp.com" => [
+                "BusinessId" => 193927,
+                "BbbId" => '1116'
+            ],
+            "https://reddit.com" => [
+                "BusinessId" => 388183,
+                "BbbId" => '1116'
+            ],
+            "https://facebook.com" => [
+                "BusinessId" => 90553632,
+                "BbbId" => '0875'
+            ],
+            "https://linkedin.com" => [
+                "BusinessId" => 239807,
+                "BbbId" => '1216'
+            ],
+        ];
+
+        // Check if URL exists in the platforms array and return the corresponding BusinessId and BbbId
+        return $platforms[$url] ?? null;  // If the URL doesn't exist, it will return null
+    }
+}
 
 
 
