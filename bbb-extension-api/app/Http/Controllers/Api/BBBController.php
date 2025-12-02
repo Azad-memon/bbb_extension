@@ -118,7 +118,7 @@ class BBBController extends Controller
                 'businessId' => $result['businessId'] ?? null,
                 'bbbId' => $result['bbbId'] ?? null,
                 'primaryBusinessURL' => $primaryBusinessURL ?? null,
-                // 'businessUrl' => $businessUrl ?? null,
+                'businessUrl' => $businessUrl ?? null,
 
             ];
 
